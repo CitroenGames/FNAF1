@@ -1,6 +1,6 @@
 #include "Gameplay.h"
-#include "SFML/Window.hpp"
-#include <SFML/Graphics.hpp>
+#include "Paingine/Window.hpp"
+#include <Paingine/Graphics.hpp>
 #include "Core/Window.h"
 #include "Assets/Resources.h"
 #include "imgui.h"
@@ -68,7 +68,7 @@ namespace {
         return true;
     }
 
-    std::vector<std::shared_ptr<sf::Texture>> LoadJumpscareFrames(const std::string &folder) {
+    std::vector<std::shared_ptr<Paingine2D::Texture>> LoadJumpscareFrames(const std::string &folder) {
         std::vector<std::pair<int, std::string>> frameFiles;
         for (const auto &file : Resources::ListFilesWithPrefix(folder)) {
             int frameIndex = 0;
@@ -79,7 +79,7 @@ namespace {
 
         std::ranges::sort(frameFiles, {}, &std::pair<int, std::string>::first);
 
-        std::vector<std::shared_ptr<sf::Texture>> frames;
+        std::vector<std::shared_ptr<Paingine2D::Texture>> frames;
         frames.reserve(frameFiles.size());
 
         int expectedIndex = 0;
@@ -103,7 +103,7 @@ namespace {
         return frames;
     }
 
-    sf::Vector2f GameViewSize() {
+    Paingine2D::Vector2f GameViewSize() {
         return {GAME_VIEW_WIDTH, GAME_VIEW_HEIGHT};
     }
 }
@@ -167,7 +167,7 @@ void Gameplay::Init() {
         m_PowerFont = Resources::GetFont("Font/five-nights-at-freddys.ttf");
         m_PowerPercentText.setFont(*m_PowerFont);
         m_PowerPercentText.setCharacterSize(24);
-        m_PowerPercentText.setFillColor(sf::Color::White);
+        m_PowerPercentText.setFillColor(Paingine2D::Color::White);
 
         // Position percentage text right after "Power left:" label
         float powerLabelRight = 30.f + m_PowerLeftSprite.getGlobalBounds().width + 8.f;
@@ -217,7 +217,7 @@ void Gameplay::Init() {
     {
         // Camera stuff
         Camera2D::Config config;
-        config.resolution = sf::Vector2f(1280.0f, 720.0f);
+        config.resolution = Paingine2D::Vector2f(1280.0f, 720.0f);
         config.initialZoom = 1.0f;
         config.smoothingFactor = 0.75f;
         config.maintainResolution = true;
@@ -265,20 +265,20 @@ void Gameplay::Update(double deltaTime) {
     }
 
     // Add keyboard shortcuts for debugging
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1)) {
+    if (Paingine2D::Keyboard::isKeyPressed(Paingine2D::Keyboard::F1)) {
         // Skip to next night
         player.m_Night++;
         SceneManager::QueueSwitchScene(std::make_shared<Menu>());
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::F2)) {
+    if (Paingine2D::Keyboard::isKeyPressed(Paingine2D::Keyboard::F2)) {
         // Force power outage
         player.m_PowerLevel = 0;
     }
 
     auto window = Window::GetWindow();
-    sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
-    sf::Vector2u windowSize = window->getSize();
+    Paingine2D::Vector2i mousePos = Paingine2D::Mouse::getPosition(*window);
+    Paingine2D::Vector2u windowSize = window->getSize();
 
     const bool cameraFeedVisible = m_CameraSystem && m_CameraSystem->IsCameraFeedVisible();
     const bool cameraTransitioning = m_CameraSystem && m_CameraSystem->IsTransitioning();
@@ -287,7 +287,7 @@ void Gameplay::Update(double deltaTime) {
     if (cameraFeedVisible) {
         // Camera feed panning - Camera2D at 640 (center) + pan offset
         float panOffset = m_CameraSystem->GetCameraPanOffset();
-        sf::Vector2f newCameraPos(
+        Paingine2D::Vector2f newCameraPos(
             (m_ViewportWidth / 2.0f) + panOffset,
             720.0f / 2.0f
         );
@@ -338,7 +338,7 @@ void Gameplay::Update(double deltaTime) {
             std::max(0.0f, m_OfficeWidth - m_ViewportWidth)
         );
         // Calculate new camera position
-        sf::Vector2f newCameraPos(
+        Paingine2D::Vector2f newCameraPos(
             scrollOffset + (m_ViewportWidth / 2.0f), // Center horizontally
             (720.0f / 2.0f) // Center vertically
         );
@@ -362,14 +362,14 @@ void Gameplay::Render() {
 
     // Draw power HUD in screen space
     if (!IsDeathSequenceActive() && gameplay && !gameplay->IsPowerOutage()) {
-        const sf::View currentView = window->getView();
-        const sf::FloatRect viewport = currentView.getViewport();
+        const Paingine2D::View currentView = window->getView();
+        const Paingine2D::FloatRect viewport = currentView.getViewport();
         ScopedView screenView(*window, window->getDefaultView());
 
         // Compute viewport offset for letterboxing/pillarboxing
-        sf::Vector2u winSize = window->getSize();
-        auto adjustPos = [&](sf::Vector2f pos) -> sf::Vector2f {
-            sf::Vector2f adjusted = pos;
+        Paingine2D::Vector2u winSize = window->getSize();
+        auto adjustPos = [&](Paingine2D::Vector2f pos) -> Paingine2D::Vector2f {
+            Paingine2D::Vector2f adjusted = pos;
             if (viewport.width < 1.0f) {
                 adjusted.x = (viewport.left * winSize.x) + (pos.x * viewport.width);
             }
@@ -648,7 +648,7 @@ void Gameplay::SwitchToGameOver() {
     m_DiscardNextJumpscareDelta = false;
 }
 
-void Gameplay::DrawDeathSequence(sf::RenderWindow &window) {
+void Gameplay::DrawDeathSequence(Paingine2D::RenderWindow &window) {
     ScopedView screenView(window, window.getDefaultView());
 
     if (m_DeathSequenceState == DeathSequenceState::Jumpscare && m_JumpscareFrames.size() > 0) {

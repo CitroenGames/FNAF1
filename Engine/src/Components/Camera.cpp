@@ -14,7 +14,7 @@ Camera2D::Config::Config()
     , maintainResolution(false) {
 }
 
-Camera2D::Config::Config(sf::Vector2f customCenter, sf::Vector2f customResolution)
+Camera2D::Config::Config(Paingine2D::Vector2f customCenter, Paingine2D::Vector2f customResolution)
     : center(customCenter)
     , resolution(customResolution)
     , initialZoom(1.0f)
@@ -41,13 +41,13 @@ Camera2D::Camera2D(const Config &config)
     validateConfig(config);
 }
 
-void Camera2D::setPosition(const sf::Vector2f &newPosition) {
+void Camera2D::setPosition(const Paingine2D::Vector2f &newPosition) {
     position = boundingEnabled ? clampToBounds(newPosition) : newPosition;
     targetPosition = position;
     updateView();
 }
 
-void Camera2D::move(const sf::Vector2f &offset) noexcept {
+void Camera2D::move(const Paingine2D::Vector2f &offset) noexcept {
     setTargetPosition(targetPosition + offset);
 }
 
@@ -72,14 +72,14 @@ void Camera2D::rotate(float angle) noexcept {
     setRotation(rotation + angle);
 }
 
-void Camera2D::focusOn(const sf::Vector2f &target, float duration) {
+void Camera2D::focusOn(const Paingine2D::Vector2f &target, float duration) {
     auto distance = target - position;
     auto speed = distance / duration;
     targetPosition = target;
     smoothingFactor = calculateSmoothingForSpeed(speed.x, speed.y);
 }
 
-void Camera2D::setBounds(const sf::FloatRect &newBounds) {
+void Camera2D::setBounds(const Paingine2D::FloatRect &newBounds) {
     if (newBounds.width <= 0 || newBounds.height <= 0) {
         throw std::invalid_argument("Bounds dimensions must be positive");
     }
@@ -97,7 +97,7 @@ void Camera2D::setMaintainResolution(bool maintain) noexcept {
     updateViewport();
 }
 
-void Camera2D::setBaseResolution(const sf::Vector2f &resolution) {
+void Camera2D::setBaseResolution(const Paingine2D::Vector2f &resolution) {
     if (resolution.x <= 0 || resolution.y <= 0) {
         throw std::invalid_argument("Resolution components must be positive");
     }
@@ -112,26 +112,26 @@ void Camera2D::update(float deltaTime) {
     updateView();
 }
 
-void Camera2D::applyTo(sf::RenderTarget &target) {
+void Camera2D::applyTo(Paingine2D::RenderTarget &target) {
     if (maintainResolution) {
         updateViewport(target.getSize());
     }
     target.setView(view);
 }
 
-sf::Vector2f Camera2D::screenToWorldCoords(const sf::Vector2f &screenPos,
-                                           const sf::RenderTarget &target) const {
+Paingine2D::Vector2f Camera2D::screenToWorldCoords(const Paingine2D::Vector2f &screenPos,
+                                           const Paingine2D::RenderTarget &target) const {
     return target.mapPixelToCoords(
-        sf::Vector2i(static_cast<int>(screenPos.x),
+        Paingine2D::Vector2i(static_cast<int>(screenPos.x),
                      static_cast<int>(screenPos.y)), view);
 }
 
-sf::Vector2f Camera2D::worldToScreenCoords(const sf::Vector2f &worldPos,
-                                           const sf::RenderTarget &target) const {
-    return sf::Vector2f(target.mapCoordsToPixel(worldPos, view));
+Paingine2D::Vector2f Camera2D::worldToScreenCoords(const Paingine2D::Vector2f &worldPos,
+                                           const Paingine2D::RenderTarget &target) const {
+    return Paingine2D::Vector2f(target.mapCoordsToPixel(worldPos, view));
 }
 
-const sf::Vector2f &Camera2D::getPosition() const noexcept {
+const Paingine2D::Vector2f &Camera2D::getPosition() const noexcept {
     return position;
 }
 
@@ -143,11 +143,11 @@ float Camera2D::getRotation() const noexcept {
     return rotation;
 }
 
-sf::FloatRect Camera2D::getViewport() const noexcept {
+Paingine2D::FloatRect Camera2D::getViewport() const noexcept {
     return view.getViewport();
 }
 
-const sf::Vector2f &Camera2D::getBaseResolution() const noexcept {
+const Paingine2D::Vector2f &Camera2D::getBaseResolution() const noexcept {
     return baseResolution;
 }
 
@@ -155,14 +155,14 @@ bool Camera2D::isMaintainingResolution() const noexcept {
     return maintainResolution;
 }
 
-const std::vector<std::pair<float, sf::Vector2f> > &Camera2D::getMotionTrail() const noexcept {
+const std::vector<std::pair<float, Paingine2D::Vector2f> > &Camera2D::getMotionTrail() const noexcept {
     return positionHistory;
 }
 
-sf::FloatRect Camera2D::getVisibleArea() const noexcept {
+Paingine2D::FloatRect Camera2D::getVisibleArea() const noexcept {
     auto size = view.getSize();
     auto center = view.getCenter();
-    return sf::FloatRect(
+    return Paingine2D::FloatRect(
         center.x - size.x / 2,
         center.y - size.y / 2,
         size.x,
@@ -188,7 +188,7 @@ void Camera2D::updateView() noexcept {
     view.setRotation(rotation);
 }
 
-void Camera2D::updateViewport(const sf::Vector2u &actualWindowSize) noexcept {
+void Camera2D::updateViewport(const Paingine2D::Vector2u &actualWindowSize) noexcept {
     if (!maintainResolution) {
         return;
     }
@@ -196,7 +196,7 @@ void Camera2D::updateViewport(const sf::Vector2u &actualWindowSize) noexcept {
     float windowAspectRatio = static_cast<float>(actualWindowSize.x) / static_cast<float>(actualWindowSize.y);
     float targetAspectRatio = baseResolution.x / baseResolution.y;
 
-    sf::FloatRect viewport(0.f, 0.f, 1.f, 1.f);
+    Paingine2D::FloatRect viewport(0.f, 0.f, 1.f, 1.f);
     if (std::abs(windowAspectRatio - targetAspectRatio) > 0.001f) {
         if (windowAspectRatio > targetAspectRatio) {
             float ratio = targetAspectRatio / windowAspectRatio;
@@ -217,17 +217,17 @@ void Camera2D::updateViewport() noexcept {
         return;
     }
 
-    sf::Vector2f viewSize = view.getSize();
-    updateViewport(sf::Vector2u(static_cast<unsigned int>(viewSize.x),
+    Paingine2D::Vector2f viewSize = view.getSize();
+    updateViewport(Paingine2D::Vector2u(static_cast<unsigned int>(viewSize.x),
                                 static_cast<unsigned int>(viewSize.y)));
 }
 
-void Camera2D::setTargetPosition(const sf::Vector2f &target) noexcept {
+void Camera2D::setTargetPosition(const Paingine2D::Vector2f &target) noexcept {
     targetPosition = boundingEnabled ? clampToBounds(target) : target;
 }
 
-sf::Vector2f Camera2D::clampToBounds(const sf::Vector2f &pos) const noexcept {
-    return sf::Vector2f(
+Paingine2D::Vector2f Camera2D::clampToBounds(const Paingine2D::Vector2f &pos) const noexcept {
+    return Paingine2D::Vector2f(
         std::clamp(pos.x, bounds.left, bounds.left + bounds.width),
         std::clamp(pos.y, bounds.top, bounds.top + bounds.height)
     );

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <Paingine/Graphics/Sprite.hpp>
+#include <Paingine/System/Vector2.hpp>
 
 namespace SpriteLayout {
     enum class FitMode {
@@ -9,8 +9,8 @@ namespace SpriteLayout {
         Cover
     };
 
-    void SetOriginToCenter(sf::Sprite &sprite);
-    void CenterAt(sf::Sprite &sprite, sf::Vector2f center);
-    void FitToSize(sf::Sprite &sprite, sf::Vector2f size, FitMode mode);
-    void FitToSizeCentered(sf::Sprite &sprite, sf::Vector2f size, FitMode mode);
+    void SetOriginToCenter(Paingine2D::Sprite &sprite);
+    void CenterAt(Paingine2D::Sprite &sprite, Paingine2D::Vector2f center);
+    void FitToSize(Paingine2D::Sprite &sprite, Paingine2D::Vector2f size, FitMode mode);
+    void FitToSizeCentered(Paingine2D::Sprite &sprite, Paingine2D::Vector2f size, FitMode mode);
 }

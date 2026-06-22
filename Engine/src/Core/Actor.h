@@ -5,7 +5,7 @@
 #include <string>
 
 #include <box2d/box2d.h>
-#include <SFML/Graphics/Sprite.hpp>
+#include <Paingine/Graphics/Sprite.hpp>
 
 #include "Graphics/LayerManager.h"
 #include "Assets/Resources.h"
@@ -91,7 +91,7 @@ public:
         UpdateGraphics();
     }
 
-    void SetScale(const sf::Vector2f &scale) {
+    void SetScale(const Paingine2D::Vector2f &scale) {
         m_Sprite.setScale(scale);
     }
 
@@ -120,8 +120,8 @@ public:
 
     b2BodyId GetBodyId() const { return m_BodyId; }
     b2ShapeId GetShapeId() const { return m_ShapeId; }
-    const sf::Sprite &GetSprite() const { return m_Sprite; }
-    sf::Sprite &GetSprite() { return m_Sprite; }
+    const Paingine2D::Sprite &GetSprite() const { return m_Sprite; }
+    Paingine2D::Sprite &GetSprite() { return m_Sprite; }
     int GetRenderLayer() const { return m_RenderLayer; }
 
     b2Vec2 GetPosition() const {
@@ -169,6 +169,6 @@ protected:
     b2WorldId m_WorldId;
     b2BodyId m_BodyId = b2_nullBodyId;
     b2ShapeId m_ShapeId = b2_nullShapeId;
-    sf::Sprite m_Sprite;
+    Paingine2D::Sprite m_Sprite;
     int m_RenderLayer;
 };

@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <Paingine/Graphics/Sprite.hpp>
+#include <Paingine/Graphics/Texture.hpp>
 
 class FlipBook {
 public:
@@ -13,10 +13,10 @@ public:
     FlipBook(int layer, float frameDuration = 0.1f, bool loop = true);
 
     // Add frames to the flipbook
-    void AddFrame(std::shared_ptr<sf::Texture> texture);
-    void AddFrame(std::shared_ptr<sf::Sprite> sprite);
-    void AddFrames(const std::vector<std::shared_ptr<sf::Sprite>>& sprites);
-    void AddFrames(const std::vector<sf::Texture>& textures);
+    void AddFrame(std::shared_ptr<Paingine2D::Texture> texture);
+    void AddFrame(std::shared_ptr<Paingine2D::Sprite> sprite);
+    void AddFrames(const std::vector<std::shared_ptr<Paingine2D::Sprite>>& sprites);
+    void AddFrames(const std::vector<Paingine2D::Texture>& textures);
 
     // Animation control
     void Update(float deltaTime);
@@ -36,11 +36,11 @@ public:
 
     // Getters
     bool IsPlaying() const;
-    sf::Sprite* GetCurrentFrame();
-    const sf::Sprite* GetCurrentFrame() const;
+    Paingine2D::Sprite* GetCurrentFrame();
+    const Paingine2D::Sprite* GetCurrentFrame() const;
 
 private:
-    std::vector<std::shared_ptr<sf::Sprite>> m_Frames;
+    std::vector<std::shared_ptr<Paingine2D::Sprite>> m_Frames;
     float m_FrameDuration;
     float m_ElapsedTime;
     std::size_t m_CurrentFrame;
@@ -49,7 +49,7 @@ private:
     int m_Layer;
     bool m_IsForward;
 
-    void AddSpriteFrame(std::shared_ptr<sf::Sprite> sprite);
+    void AddSpriteFrame(std::shared_ptr<Paingine2D::Sprite> sprite);
     bool HasCurrentFrame() const;
     void UpdateLayerManagerRegistration();
 };

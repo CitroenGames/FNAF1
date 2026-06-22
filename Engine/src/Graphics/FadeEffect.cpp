@@ -1,14 +1,14 @@
 #include "Graphics/FadeEffect.h"
 
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/Shape.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Text.hpp>
+#include <Paingine/Graphics/RectangleShape.hpp>
+#include <Paingine/Graphics/Shape.hpp>
+#include <Paingine/Graphics/Sprite.hpp>
+#include <Paingine/Graphics/Text.hpp>
 
 FadeEffect::FadeEffect()
-    : m_Duration(sf::seconds(1.0f))
+    : m_Duration(Paingine2D::seconds(1.0f))
     , m_State(None)
-    , m_ElapsedTime(sf::Time::Zero)
+    , m_ElapsedTime(Paingine2D::Time::Zero)
     , m_Alpha(0) {
 }
 
@@ -16,27 +16,27 @@ FadeEffect::~FadeEffect() {
     m_Drawable = nullptr;
 }
 
-void FadeEffect::SetDrawable(sf::Drawable* drawable) {
+void FadeEffect::SetDrawable(Paingine2D::Drawable* drawable) {
     m_Drawable = drawable;
 }
 
-void FadeEffect::SetDuration(const sf::Time& duration) {
+void FadeEffect::SetDuration(const Paingine2D::Time& duration) {
     m_Duration = duration;
 }
 
 void FadeEffect::StartFadeIn() {
     m_State = In;
-    m_ElapsedTime = sf::Time::Zero;
+    m_ElapsedTime = Paingine2D::Time::Zero;
     m_Alpha = 0;
 }
 
 void FadeEffect::StartFadeOut() {
     m_State = Out;
-    m_ElapsedTime = sf::Time::Zero;
+    m_ElapsedTime = Paingine2D::Time::Zero;
     m_Alpha = 255;
 }
 
-bool FadeEffect::Update(sf::Time deltaTime) {
+bool FadeEffect::Update(Paingine2D::Time deltaTime) {
     if (m_State == None || !m_Drawable) {
         return false;
     }
@@ -56,9 +56,9 @@ bool FadeEffect::Update(sf::Time deltaTime) {
     }
 
     if (m_State == In) {
-        m_Alpha = static_cast<sf::Uint8>(255 * progress);
+        m_Alpha = static_cast<Paingine2D::Uint8>(255 * progress);
     } else if (m_State == Out) {
-        m_Alpha = static_cast<sf::Uint8>(255 * (1.0f - progress));
+        m_Alpha = static_cast<Paingine2D::Uint8>(255 * (1.0f - progress));
     }
 
     ApplyAlpha();
@@ -74,20 +74,20 @@ void FadeEffect::ApplyAlpha() {
         return;
     }
 
-    sf::Color color;
-    if (auto* shape = dynamic_cast<sf::Shape*>(m_Drawable)) {
+    Paingine2D::Color color;
+    if (auto* shape = dynamic_cast<Paingine2D::Shape*>(m_Drawable)) {
         color = shape->getFillColor();
         color.a = m_Alpha;
         shape->setFillColor(color);
-    } else if (auto* sprite = dynamic_cast<sf::Sprite*>(m_Drawable)) {
+    } else if (auto* sprite = dynamic_cast<Paingine2D::Sprite*>(m_Drawable)) {
         color = sprite->getColor();
         color.a = m_Alpha;
         sprite->setColor(color);
-    } else if (auto* text = dynamic_cast<sf::Text*>(m_Drawable)) {
+    } else if (auto* text = dynamic_cast<Paingine2D::Text*>(m_Drawable)) {
         color = text->getFillColor();
         color.a = m_Alpha;
         text->setFillColor(color);
-    } else if (auto* rectangleShape = dynamic_cast<sf::RectangleShape*>(m_Drawable)) {
+    } else if (auto* rectangleShape = dynamic_cast<Paingine2D::RectangleShape*>(m_Drawable)) {
         color = rectangleShape->getFillColor();
         color.a = m_Alpha;
         rectangleShape->setFillColor(color);

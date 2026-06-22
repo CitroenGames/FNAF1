@@ -9,11 +9,11 @@
 #include "Graphics/LayerManager.h"
 #include "Input/InputActionMap.h"
 #include "Scene/SceneManager.h"
-#include "imgui/imgui-SFML.h"
+#include "imgui/imgui-Paingine.h"
 #include "Utils/Profiler.h"
 
 namespace {
-    std::shared_ptr<sf::RenderWindow> g_Window;
+    std::shared_ptr<Paingine2D::RenderWindow> g_Window;
     Application::Config g_Config;
 }
 
@@ -40,7 +40,7 @@ void Application::Init(const Config &config) {
     g_Window = Window::Init(g_Config.window);
     g_Window->setVerticalSyncEnabled(g_Config.verticalSync);
     if (g_Config.enableImGui) {
-        ImGui::SFML::Init(*g_Window, true);
+        ImGui::Paingine::Init(*g_Window, true);
     }
     Window::UpdateViewport();
 }
@@ -75,20 +75,20 @@ void Application::Run() {
     double accumulator = 0.0;
     const double frameTime = 1.0 / static_cast<double>(g_Config.fixedTickRate);
 
-    sf::Event event;
-    sf::Clock deltaClock;
+    Paingine2D::Event event;
+    Paingine2D::Clock deltaClock;
 
     while (g_Window->isOpen()) {
         PROFILE_BEGIN("Application Loop");
         while (g_Window->pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+            if (event.type == Paingine2D::Event::Closed) {
                 g_Window->close();
                 break;
-            } else if (event.type == sf::Event::Resized) {
+            } else if (event.type == Paingine2D::Event::Resized) {
                 Window::UpdateViewport();
             }
             if (g_Config.enableImGui) {
-                ImGui::SFML::ProcessEvent(event);
+                ImGui::Paingine::ProcessEvent(event);
             }
         }
 
@@ -100,7 +100,7 @@ void Application::Run() {
         accumulator += elapsedTime.count();
 
         if (g_Config.enableImGui) {
-            ImGui::SFML::Update(*g_Window, deltaClock.restart());
+            ImGui::Paingine::Update(*g_Window, deltaClock.restart());
         }
 
         while (accumulator >= frameTime) {
@@ -115,7 +115,7 @@ void Application::Run() {
         LayerManager::Draw(*g_Window);
         SceneManager::Render();
         if (g_Config.enableImGui) {
-            ImGui::SFML::Render(*g_Window);
+            ImGui::Paingine::Render(*g_Window);
         }
         g_Window->display();
         PROFILE_END();
@@ -129,7 +129,7 @@ void Application::Destroy() {
     LayerManager::Clear();
     SceneManager::Destroy();
     if (g_Config.enableImGui) {
-        ImGui::SFML::Shutdown();
+        ImGui::Paingine::Shutdown();
     }
     Resources::Unload();
     Window::Destroy();

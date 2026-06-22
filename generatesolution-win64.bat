@@ -1,3 +1,3 @@
 @echo off
-sighmake Fnaf-SFML.buildscript
+sighmake Fnaf1.buildscript
 pause

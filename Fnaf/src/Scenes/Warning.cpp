@@ -25,7 +25,7 @@ WarningMessage::WarningMessage() {
     m_WarningMessageSprite.setTexture(*m_WarningMessageTexture);
 
     // Center the warning message
-    const sf::Vector2u windowSize = Window::GetWindow()->getSize();
+    const Paingine2D::Vector2u windowSize = Window::GetWindow()->getSize();
     m_WarningMessageSprite.setPosition(UI::Layout::CenteredPosition(windowSize, m_WarningMessageSprite.getGlobalBounds()));
 
     // reason why we are doing this is to not waste time on loading the menu while we wait for the warning message

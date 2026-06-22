@@ -4,8 +4,8 @@
 #include <memory>
 #include <vector>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <Paingine/Graphics/RenderWindow.hpp>
+#include <Paingine/Graphics/Texture.hpp>
 
 #include "ImageButton.h"
 
@@ -25,9 +25,9 @@ public:
         std::function<void(bool active)> onBottomClick
     );
 
-    void SetTextures(const std::vector<std::shared_ptr<sf::Texture> > &textures);
+    void SetTextures(const std::vector<std::shared_ptr<Paingine2D::Texture> > &textures);
     void updateButton();
-    void updateButton(sf::RenderWindow &window);
+    void updateButton(Paingine2D::RenderWindow &window);
 
     ButtonState GetCurrentState() const;
 
@@ -37,7 +37,7 @@ public:
 private:
     std::function<void(bool active)> m_OnTopClick;
     std::function<void(bool active)> m_OnBottomClick;
-    std::vector<std::shared_ptr<sf::Texture> > m_Textures;
+    std::vector<std::shared_ptr<Paingine2D::Texture> > m_Textures;
 
     ButtonState m_CurrentState;
     bool m_WasMousePressed;
@@ -47,5 +47,5 @@ private:
     void updateBottomState();
     void updateTexture();
 
-    bool IsClicked(sf::RenderWindow &window) override;
+    bool IsClicked(Paingine2D::RenderWindow &window) override;
 };

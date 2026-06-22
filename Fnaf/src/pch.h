@@ -20,11 +20,11 @@
 #include <numeric>
 #include <math.h>
 
-// SFML
-#include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
+// Paingine
+#include <Paingine/Graphics.hpp>
+#include <Paingine/Network.hpp>
+#include <Paingine/System.hpp>
+#include <Paingine/Window.hpp>
 
 // Engine
 #include "Core/Window.h"

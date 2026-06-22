@@ -45,21 +45,21 @@ void GlitchEffect::Kill() {
     }
 }
 
-void GlitchEffect::AddFrame(std::shared_ptr<sf::Texture> texture) {
-    m_Frames.push_back(std::make_shared<sf::Sprite>(*texture));
+void GlitchEffect::AddFrame(std::shared_ptr<Paingine2D::Texture> texture) {
+    m_Frames.push_back(std::make_shared<Paingine2D::Sprite>(*texture));
     if (m_Frames.size() == 1) {
         RegisterToLayerManager();
     }
 }
 
-void GlitchEffect::AddFrame(std::shared_ptr<sf::Sprite> sprite) {
+void GlitchEffect::AddFrame(std::shared_ptr<Paingine2D::Sprite> sprite) {
     m_Frames.push_back(sprite);
     if (m_Frames.size() == 1) {
         RegisterToLayerManager();
     }
 }
 
-void GlitchEffect::AddFrames(const std::vector<std::shared_ptr<sf::Sprite>>& sprites) {
+void GlitchEffect::AddFrames(const std::vector<std::shared_ptr<Paingine2D::Sprite>>& sprites) {
     const bool wasEmpty = m_Frames.empty();
     for (const auto& sprite : sprites) {
         m_Frames.push_back(sprite);
@@ -69,10 +69,10 @@ void GlitchEffect::AddFrames(const std::vector<std::shared_ptr<sf::Sprite>>& spr
     }
 }
 
-void GlitchEffect::AddFrames(const std::vector<std::shared_ptr<sf::Texture>>& textures) {
+void GlitchEffect::AddFrames(const std::vector<std::shared_ptr<Paingine2D::Texture>>& textures) {
     const bool wasEmpty = m_Frames.empty();
     for (const auto& texture : textures) {
-        m_Frames.push_back(std::make_shared<sf::Sprite>(*texture));
+        m_Frames.push_back(std::make_shared<Paingine2D::Sprite>(*texture));
     }
     if (wasEmpty && !m_Frames.empty()) {
         RegisterToLayerManager();

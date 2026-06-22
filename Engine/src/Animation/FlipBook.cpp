@@ -20,24 +20,24 @@ FlipBook::FlipBook(int layer, float frameDuration, bool loop)
     m_IsForward(true) {
 }
 
-void FlipBook::AddFrame(std::shared_ptr<sf::Texture> texture) {
-    auto sprite = std::make_shared<sf::Sprite>(*texture);
+void FlipBook::AddFrame(std::shared_ptr<Paingine2D::Texture> texture) {
+    auto sprite = std::make_shared<Paingine2D::Sprite>(*texture);
     AddSpriteFrame(std::move(sprite));
 }
 
-void FlipBook::AddFrame(std::shared_ptr<sf::Sprite> sprite) {
+void FlipBook::AddFrame(std::shared_ptr<Paingine2D::Sprite> sprite) {
     AddSpriteFrame(std::move(sprite));
 }
 
-void FlipBook::AddFrames(const std::vector<std::shared_ptr<sf::Sprite>>& sprites) {
+void FlipBook::AddFrames(const std::vector<std::shared_ptr<Paingine2D::Sprite>>& sprites) {
     for (const auto& sprite : sprites) {
         AddFrame(sprite);
     }
 }
 
-void FlipBook::AddFrames(const std::vector<sf::Texture>& textures) {
+void FlipBook::AddFrames(const std::vector<Paingine2D::Texture>& textures) {
     for (const auto& texture : textures) {
-        AddFrame(std::make_shared<sf::Texture>(texture));
+        AddFrame(std::make_shared<Paingine2D::Texture>(texture));
     }
 }
 
@@ -140,14 +140,14 @@ void FlipBook::SetPosition(float x, float y) {
     }
 }
 
-sf::Sprite* FlipBook::GetCurrentFrame() {
+Paingine2D::Sprite* FlipBook::GetCurrentFrame() {
     if (HasCurrentFrame()) {
         return m_Frames[m_CurrentFrame].get();
     }
     return nullptr;
 }
 
-const sf::Sprite* FlipBook::GetCurrentFrame() const {
+const Paingine2D::Sprite* FlipBook::GetCurrentFrame() const {
     if (HasCurrentFrame()) {
         return m_Frames[m_CurrentFrame].get();
     }
@@ -166,7 +166,7 @@ bool FlipBook::IsPlaying() const {
     return m_IsPlayingFlag;
 }
 
-void FlipBook::AddSpriteFrame(std::shared_ptr<sf::Sprite> sprite) {
+void FlipBook::AddSpriteFrame(std::shared_ptr<Paingine2D::Sprite> sprite) {
     if (!m_Frames.empty()) {
         sprite->setPosition(m_Frames[0]->getPosition());
     }

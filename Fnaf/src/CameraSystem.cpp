@@ -10,8 +10,8 @@
 namespace {
     constexpr float CameraViewWidth = 1280.0f;
     constexpr float CameraViewHeight = 720.0f;
-    const sf::Vector2f CameraMapCenter{1012.0f, 515.0f};
-    const sf::Vector2f CameraRoomNamePosition{815.0f, 285.0f};
+    const Paingine2D::Vector2f CameraMapCenter{1012.0f, 515.0f};
+    const Paingine2D::Vector2f CameraRoomNamePosition{815.0f, 285.0f};
 }
 
 CameraSystem::CameraSystem()
@@ -23,7 +23,7 @@ CameraSystem::CameraSystem()
 void CameraSystem::Init()
 {
     // Load camera map - positioned in bottom-right like the real game
-    m_CameraMapSprite = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CameraMap.png"));
+    m_CameraMapSprite = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CameraMap.png"));
     m_MapBasePos = CameraMapCenter;
     m_CameraMapSprite->setPosition(m_MapBasePos);
     m_CameraMapSprite->setOrigin(m_CameraMapSprite->getGlobalBounds().width / 2,
@@ -54,17 +54,17 @@ void CameraSystem::Init()
 void CameraSystem::InitializeCameraViews()
 {
     // Initialize default camera views
-    m_CameraViews["1A"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/Normal.png"));
-    m_CameraViews["1B"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/Normal.png"));
-    m_CameraViews["1C"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1C/Normal.png"));
-    m_CameraViews["2A"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam2A/Normal1.png"));
-    m_CameraViews["2B"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam2B/Normal.png"));
-    m_CameraViews["3"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam3/Normal.png"));
-    m_CameraViews["4A"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam4A/Normal.png"));
-    m_CameraViews["4B"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam4B/Normal.png"));
-    m_CameraViews["5"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam5/Normal.png"));
-    m_CameraViews["6"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam6/Normal.png"));
-    m_CameraViews["7"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam7/Normal.png"));
+    m_CameraViews["1A"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/Normal.png"));
+    m_CameraViews["1B"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/Normal.png"));
+    m_CameraViews["1C"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1C/Normal.png"));
+    m_CameraViews["2A"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam2A/Normal1.png"));
+    m_CameraViews["2B"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam2B/Normal.png"));
+    m_CameraViews["3"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam3/Normal.png"));
+    m_CameraViews["4A"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam4A/Normal.png"));
+    m_CameraViews["4B"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam4B/Normal.png"));
+    m_CameraViews["5"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam5/Normal.png"));
+    m_CameraViews["6"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam6/Normal.png"));
+    m_CameraViews["7"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam7/Normal.png"));
 
     // Center all camera views
     for (auto& [id, sprite] : m_CameraViews) {
@@ -76,21 +76,21 @@ void CameraSystem::InitializeCameraViews()
     // Initialize alternative states for camera views (for animatronics)
 
     // Cam1A states
-    m_CameraStateViews["1A"]["Normal"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/Normal.png"));
-    m_CameraStateViews["1A"]["AllLooking"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/AllLooking.png"));
-    m_CameraStateViews["1A"]["ChicaGone"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/ChicaGone.png"));
-    m_CameraStateViews["1A"]["Empty"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/Empty.png")); // should we make this the normal and not the other way around?
-    m_CameraStateViews["1A"]["FreddyOnly"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/FreddyOnly.png"));
-    m_CameraStateViews["1A"]["FreddyOnlyLooking"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/FreddyOnlyLooking.png"));
-    m_CameraStateViews["1A"]["NoBonnie"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/NoBonnie.png"));
+    m_CameraStateViews["1A"]["Normal"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/Normal.png"));
+    m_CameraStateViews["1A"]["AllLooking"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/AllLooking.png"));
+    m_CameraStateViews["1A"]["ChicaGone"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/ChicaGone.png"));
+    m_CameraStateViews["1A"]["Empty"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/Empty.png")); // should we make this the normal and not the other way around?
+    m_CameraStateViews["1A"]["FreddyOnly"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/FreddyOnly.png"));
+    m_CameraStateViews["1A"]["FreddyOnlyLooking"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/FreddyOnlyLooking.png"));
+    m_CameraStateViews["1A"]["NoBonnie"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1A/NoBonnie.png"));
 
     // Cam1B states
-    m_CameraStateViews["1B"]["Normal"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/Normal.png"));
-    m_CameraStateViews["1B"]["BonnieStage1"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/BonnieStage1.png"));
-    m_CameraStateViews["1B"]["BonnieStage2"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/BonnieStage2.png"));
-    m_CameraStateViews["1B"]["ChicaStage1"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/ChicaStage1.png"));
-    m_CameraStateViews["1B"]["ChicaStage2"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/ChicaStage2.png"));
-    m_CameraStateViews["1B"]["Freddy"] = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/Freddy.png"));
+    m_CameraStateViews["1B"]["Normal"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/Normal.png"));
+    m_CameraStateViews["1B"]["BonnieStage1"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/BonnieStage1.png"));
+    m_CameraStateViews["1B"]["BonnieStage2"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/BonnieStage2.png"));
+    m_CameraStateViews["1B"]["ChicaStage1"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/ChicaStage1.png"));
+    m_CameraStateViews["1B"]["ChicaStage2"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/ChicaStage2.png"));
+    m_CameraStateViews["1B"]["Freddy"] = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CamViews/Cam1B/Freddy.png"));
 
     // Center all camera state views
     for (auto& [camId, states] : m_CameraStateViews) {
@@ -186,7 +186,7 @@ void CameraSystem::InitializeAnimations()
     // Static noise animation
     m_StaticAnimation = FlipBook(CAMERA_ANIM_LAYER, 0.05f, true);
     for (int i = 1; i <= 8; i++) {
-        auto sprite = std::make_shared<sf::Sprite>(
+        auto sprite = std::make_shared<Paingine2D::Sprite>(
             *Resources::GetTexture("Graphics/Static/Noise" + std::to_string(i) + ".png")
         );
         SpriteLayout::FitToSizeCentered(
@@ -201,7 +201,7 @@ void CameraSystem::InitializeAnimations()
 void CameraSystem::InitializeCameraOverlays()
 {
     // Load camera border overlay
-    m_CameraBorderSprite = std::make_shared<sf::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CameraBorder.png"));
+    m_CameraBorderSprite = std::make_shared<Paingine2D::Sprite>(*Resources::GetTexture("Graphics/CameraSystem/CameraBorder.png"));
     m_CameraBorderSprite->setPosition(640.0f, 360.0f);
     m_CameraBorderSprite->setOrigin(m_CameraBorderSprite->getGlobalBounds().width / 2,
         m_CameraBorderSprite->getGlobalBounds().height / 2);
@@ -224,7 +224,7 @@ void CameraSystem::InitializeCameraOverlays()
     for (const auto& [camId, filename] : cameraNameFiles) {
         auto tex = Resources::GetTexture("Graphics/CameraSystem/Text/" + filename + ".png");
         if (tex) {
-            m_CameraNameSprites[camId] = std::make_shared<sf::Sprite>(*tex);
+            m_CameraNameSprites[camId] = std::make_shared<Paingine2D::Sprite>(*tex);
             m_CameraNameSprites[camId]->setPosition(CameraRoomNamePosition);
             m_NameBasePositions[camId] = CameraRoomNamePosition;
         }

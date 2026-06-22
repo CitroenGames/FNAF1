@@ -1,9 +1,9 @@
-# FNAF Clone Made in SFML
+# FNAF 1 Clone
 
 ![Main Menu](Images/Menu.png)
 
 
-This project is an early work-in-progress clone inspired by the "Five Nights at Freddy's" (FNaF) game, built using SFML (Simple and Fast Multimedia Library). 
+This project is an early work-in-progress clone inspired by the "Five Nights at Freddy's" (FNaF) game, built on the Paingine2D engine layer.
 
 Currently, the game features a **main menu** (which is not yet like the original game) and an **office** scene that doesn't function properly. Key elements, such as the **animatronics**, **camera system**, **doors**, and **buttons**, are not yet implemented or fully functional.
 
@@ -28,14 +28,12 @@ To get started with the game on Linux, follow these steps:
 
    ```bash
     sudo apt update
-    sudo apt install build-essential glew-utils libglew-dev libsfml-dev libopenal-dev libsndfile1
+    sudo apt install build-essential glew-utils libglew-dev
    ```
 
    This will install the necessary packages:
    - `build-essential`: Basic development tools, such as `make` and compilers.
    - `glew-utils` and `libglew-dev`: Libraries for OpenGL extensions.
-   - `libsfml-dev`: SFML development files for compiling the program.
-   - `libopenal-dev` and `libsndfile1`: Audio libraries required for sound functionality in SFML.
 
 2. **Verify OpenGL Installation (Optional)**
 
@@ -59,7 +57,7 @@ xcode-select --install
 The executable is written to:
 
 ```bash
-build/bin/Release/Fnaf-SFML
+build/bin/Release/Fnaf1
 ```
 
 ### Build Instructions for Windows
@@ -69,4 +67,4 @@ generatesolution-win64.bat
 sighmake --build . --config Release --parallel 8
 ```
 
-The executable is written to `build\bin\Release\Fnaf-SFML.exe`.
+The executable is written to `build\bin\Release\Fnaf1.exe`.

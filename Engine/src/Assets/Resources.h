@@ -7,7 +7,7 @@
 class AudioClip;
 class Pakker;
 
-namespace sf {
+namespace Paingine2D {
 class Font;
 class Texture;
 }
@@ -24,11 +24,11 @@ public:
 
     static std::shared_ptr<std::vector<uint8_t> > LoadBytes(const std::string &filename);
 
-    static std::shared_ptr<sf::Texture> GetTexture(const std::string &filename);
+    static std::shared_ptr<Paingine2D::Texture> GetTexture(const std::string &filename);
 
     static std::shared_ptr<AudioClip> GetMusic(const std::string &filename);
 
-    static std::shared_ptr<sf::Font> GetFont(const std::string &filename);
+    static std::shared_ptr<Paingine2D::Font> GetFont(const std::string &filename);
 
     static std::vector<std::string> ListFiles();
 

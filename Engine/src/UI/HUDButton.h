@@ -3,9 +3,9 @@
 #include <memory>
 #include <string>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <Paingine/Graphics/RenderWindow.hpp>
+#include <Paingine/Graphics/Texture.hpp>
+#include <Paingine/System/Vector2.hpp>
 
 #include "BaseButton.h"
 
@@ -18,32 +18,32 @@ public:
     using BaseButton::IsMouseOver;
 
     void SetPosition(float x, float y);
-    void SetPosition(sf::Vector2f position);
+    void SetPosition(Paingine2D::Vector2f position);
 
-    sf::Vector2f GetScreenPosition() const;
+    Paingine2D::Vector2f GetScreenPosition() const;
 
     virtual void SetTexture(const std::string& textureFile);
-    void SetTexture(const sf::Texture& texture);
-    void SetTexture(std::shared_ptr<sf::Texture> texture);
+    void SetTexture(const Paingine2D::Texture& texture);
+    void SetTexture(std::shared_ptr<Paingine2D::Texture> texture);
 
-    bool IsMouseOver(sf::RenderWindow& window) const override;
-    bool IsClicked(sf::RenderWindow& window) override;
+    bool IsMouseOver(Paingine2D::RenderWindow& window) const override;
+    bool IsClicked(Paingine2D::RenderWindow& window) override;
 
     void UpdatePosition();
-    void Draw(sf::RenderWindow& window);
+    void Draw(Paingine2D::RenderWindow& window);
     void Show();
     void Hide();
 
 protected:
     int m_Layer = 0;
-    sf::Vector2f m_ScreenPosition; // Position relative to screen
+    Paingine2D::Vector2f m_ScreenPosition; // Position relative to screen
     bool m_IsVisible = false;
 
     void CenterOrigin();
-    sf::Vector2f AdjustForViewport(const sf::Vector2f& position) const;
+    Paingine2D::Vector2f AdjustForViewport(const Paingine2D::Vector2f& position) const;
 
 private:
-    void ApplyTexture(std::shared_ptr<sf::Texture> texture, const std::string& errorMessage);
+    void ApplyTexture(std::shared_ptr<Paingine2D::Texture> texture, const std::string& errorMessage);
 
-    using sf::Sprite::setPosition;
+    using Paingine2D::Sprite::setPosition;
 };

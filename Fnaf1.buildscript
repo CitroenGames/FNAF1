@@ -1,0 +1,8 @@
+[solution]
+name = Fnaf1
+configurations = Debug, Release
+platforms = x64, Linux, macOS
+
+include = Engine/deps/deps.buildscript
+include = Engine/Engine.buildscript
+include = Fnaf/Fnaf1.buildscript

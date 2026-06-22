@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include <SFML/Window/Mouse.hpp>
+#include <Paingine/Window/Mouse.hpp>
 
 #include "Core/Window.h"
 
@@ -17,7 +17,7 @@ bool BaseButton::IsClicked() {
 }
 
 bool BaseButton::HandleLeftClick(bool isMouseOver) {
-    const bool isCurrentlyPressed = isMouseOver && sf::Mouse::isButtonPressed(sf::Mouse::Left);
+    const bool isCurrentlyPressed = isMouseOver && Paingine2D::Mouse::isButtonPressed(Paingine2D::Mouse::Left);
     if (isCurrentlyPressed && !m_IsPressed) {
         m_IsPressed = true;
         return true;
@@ -30,12 +30,12 @@ bool BaseButton::HandleLeftClick(bool isMouseOver) {
     return false;
 }
 
-bool BaseButton::SetOwnedTexture(std::shared_ptr<sf::Texture> texture) {
+bool BaseButton::SetOwnedTexture(std::shared_ptr<Paingine2D::Texture> texture) {
     m_ButtonTexture = std::move(texture);
     if (!m_ButtonTexture) {
         return false;
     }
 
-    sf::Sprite::setTexture(*m_ButtonTexture);
+    Paingine2D::Sprite::setTexture(*m_ButtonTexture);
     return true;
 }

@@ -3,9 +3,9 @@
 #include <memory>
 #include <string>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <Paingine/Graphics/RenderWindow.hpp>
+#include <Paingine/Graphics/Texture.hpp>
+#include <Paingine/System/Vector2.hpp>
 
 #include "BaseButton.h"
 
@@ -18,16 +18,16 @@ public:
     using BaseButton::IsMouseOver;
 
     void SetPosition(float x, float y);
-    void SetPosition(sf::Vector2f position);
+    void SetPosition(Paingine2D::Vector2f position);
 
     void SetVisible(bool visible);
 
     virtual void SetTexture(const std::string& textureFile);
-    void SetTexture(const sf::Texture& texture);
-    void SetTexture(std::shared_ptr<sf::Texture> texture);
+    void SetTexture(const Paingine2D::Texture& texture);
+    void SetTexture(std::shared_ptr<Paingine2D::Texture> texture);
 
-    bool IsMouseOver(sf::RenderWindow& window) const override;
-    virtual bool IsClicked(sf::RenderWindow& window) override;
+    bool IsMouseOver(Paingine2D::RenderWindow& window) const override;
+    virtual bool IsClicked(Paingine2D::RenderWindow& window) override;
 
     void SetLayer(int layer);
 
@@ -35,7 +35,7 @@ protected:
     int m_Layer = 0;
 
 private:
-    void ApplyTexture(std::shared_ptr<sf::Texture> texture, const std::string& errorMessage);
+    void ApplyTexture(std::shared_ptr<Paingine2D::Texture> texture, const std::string& errorMessage);
 
-    using sf::Sprite::setPosition;
+    using Paingine2D::Sprite::setPosition;
 };

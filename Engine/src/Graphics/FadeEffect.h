@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/System/Time.hpp>
+#include <Paingine/Graphics/Drawable.hpp>
+#include <Paingine/System/Time.hpp>
 
 class FadeEffect {
 public:
@@ -10,21 +10,21 @@ public:
     FadeEffect();
     ~FadeEffect();
 
-    void SetDrawable(sf::Drawable* drawable);
-    void SetDuration(const sf::Time& duration);
+    void SetDrawable(Paingine2D::Drawable* drawable);
+    void SetDuration(const Paingine2D::Time& duration);
 
     void StartFadeIn();
     void StartFadeOut();
 
-    bool Update(sf::Time deltaTime);
+    bool Update(Paingine2D::Time deltaTime);
     bool IsFading() const;
 
 private:
-    sf::Drawable* m_Drawable = nullptr;
-    sf::Time m_Duration;
+    Paingine2D::Drawable* m_Drawable = nullptr;
+    Paingine2D::Time m_Duration;
     FadeState m_State;
-    sf::Time m_ElapsedTime;
-    sf::Uint8 m_Alpha;
+    Paingine2D::Time m_ElapsedTime;
+    Paingine2D::Uint8 m_Alpha;
 
     void ApplyAlpha();
 };

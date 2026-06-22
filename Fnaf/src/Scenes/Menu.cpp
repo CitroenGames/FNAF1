@@ -48,7 +48,7 @@ Menu::Menu() {
 
     // Setup warning message sprite
     m_WarningMessageSprite.setTexture(*m_WarningMessageTexture);
-    const sf::Vector2u windowSize = Window::GetWindow()->getSize();
+    const Paingine2D::Vector2u windowSize = Window::GetWindow()->getSize();
     m_WarningMessageSprite.setPosition(UI::Layout::CenteredPosition(windowSize, m_WarningMessageSprite.getGlobalBounds()));
 
     // load loading screen sprite
@@ -58,7 +58,7 @@ Menu::Menu() {
     font = Resources::GetFont("Font/five-nights-at-freddys.ttf");
 
     // Prepare logo sprite
-    m_LogoSprite = sf::Sprite(*m_Logo);
+    m_LogoSprite = Paingine2D::Sprite(*m_Logo);
     m_LogoSprite.setPosition(100, 100);
 }
 
@@ -74,8 +74,8 @@ void Menu::Init() {
     m_TimeText.setFont(*font);
     m_TimeText.setString("12:00 AM");
     m_TimeText.setCharacterSize(75);
-    m_TimeText.setFillColor(sf::Color::White);
-    const sf::Vector2u windowSize = Window::GetWindow()->getSize();
+    m_TimeText.setFillColor(Paingine2D::Color::White);
+    const Paingine2D::Vector2u windowSize = Window::GetWindow()->getSize();
     m_TimeText.setPosition(
         UI::Layout::CenteredX(windowSize, m_TimeText.getGlobalBounds()),
         static_cast<float>(windowSize.y) / 2.0f - 25.0f
@@ -84,7 +84,7 @@ void Menu::Init() {
     m_NightText.setFont(*font);
     m_NightText.setString("1st Night");
     m_NightText.setCharacterSize(75);
-    m_NightText.setFillColor(sf::Color::White);
+    m_NightText.setFillColor(Paingine2D::Color::White);
     m_NightText.setPosition(
         UI::Layout::CenteredX(windowSize, m_NightText.getGlobalBounds()),
         static_cast<float>(windowSize.y) / 2.0f + 25.0f
@@ -115,7 +115,7 @@ void Menu::Init() {
     m_WhiteGlitchEffect.SetGlitchParameters(1.f, 1.5f, 0.15f);
 
     // Prepare newspaper sprite
-    NewsPaperSprite = sf::Sprite(*NewsPaperTexture);
+    NewsPaperSprite = Paingine2D::Sprite(*NewsPaperTexture);
     NewsPaperSprite.setPosition(UI::Layout::CenteredPosition(windowSize, NewsPaperSprite.getGlobalBounds()));
 
     // Setup new game button

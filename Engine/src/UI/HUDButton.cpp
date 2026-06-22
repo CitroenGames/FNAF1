@@ -3,8 +3,8 @@
 #include <iostream>
 #include <utility>
 
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Window/Mouse.hpp>
+#include <Paingine/Graphics/Rect.hpp>
+#include <Paingine/Window/Mouse.hpp>
 
 #include "Assets/Resources.h"
 #include "Core/Window.h"
@@ -23,12 +23,12 @@ void HUDButton::SetPosition(float x, float y) {
     UpdatePosition();
 }
 
-void HUDButton::SetPosition(sf::Vector2f position) {
+void HUDButton::SetPosition(Paingine2D::Vector2f position) {
     m_ScreenPosition = position;
     UpdatePosition();
 }
 
-sf::Vector2f HUDButton::GetScreenPosition() const {
+Paingine2D::Vector2f HUDButton::GetScreenPosition() const {
     return m_ScreenPosition;
 }
 
@@ -36,22 +36,22 @@ void HUDButton::SetTexture(const std::string& textureFile) {
     ApplyTexture(Resources::GetTexture(textureFile), "Error loading texture: " + textureFile);
 }
 
-void HUDButton::SetTexture(const sf::Texture& texture) {
-    ApplyTexture(std::make_shared<sf::Texture>(texture), "Error: Provided texture is null.");
+void HUDButton::SetTexture(const Paingine2D::Texture& texture) {
+    ApplyTexture(std::make_shared<Paingine2D::Texture>(texture), "Error: Provided texture is null.");
 }
 
-void HUDButton::SetTexture(std::shared_ptr<sf::Texture> texture) {
+void HUDButton::SetTexture(std::shared_ptr<Paingine2D::Texture> texture) {
     ApplyTexture(std::move(texture), "Error: Provided texture is null.");
 }
 
-bool HUDButton::IsMouseOver(sf::RenderWindow& window) const {
-    const sf::View currentView = window.getView();
-    const sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    const sf::FloatRect viewport = currentView.getViewport();
-    const sf::Vector2u windowSize = window.getSize();
+bool HUDButton::IsMouseOver(Paingine2D::RenderWindow& window) const {
+    const Paingine2D::View currentView = window.getView();
+    const Paingine2D::Vector2i mousePos = Paingine2D::Mouse::getPosition(window);
+    const Paingine2D::FloatRect viewport = currentView.getViewport();
+    const Paingine2D::Vector2u windowSize = window.getSize();
     ScopedView screenView(window, window.getDefaultView());
 
-    sf::Vector2f viewPos;
+    Paingine2D::Vector2f viewPos;
     if (viewport.width < 1.0f) {
         if (mousePos.x < viewport.left * windowSize.x ||
             mousePos.x > (viewport.left + viewport.width) * windowSize.x) {
@@ -60,7 +60,7 @@ bool HUDButton::IsMouseOver(sf::RenderWindow& window) const {
 
         float adjustedX = (mousePos.x - (viewport.left * windowSize.x)) /
                           (viewport.width * windowSize.x) * windowSize.x;
-        viewPos = window.mapPixelToCoords(sf::Vector2i(static_cast<int>(adjustedX), mousePos.y));
+        viewPos = window.mapPixelToCoords(Paingine2D::Vector2i(static_cast<int>(adjustedX), mousePos.y));
     } else if (viewport.height < 1.0f) {
         if (mousePos.y < viewport.top * windowSize.y ||
             mousePos.y > (viewport.top + viewport.height) * windowSize.y) {
@@ -69,32 +69,32 @@ bool HUDButton::IsMouseOver(sf::RenderWindow& window) const {
 
         float adjustedY = (mousePos.y - (viewport.top * windowSize.y)) /
                           (viewport.height * windowSize.y) * windowSize.y;
-        viewPos = window.mapPixelToCoords(sf::Vector2i(mousePos.x, static_cast<int>(adjustedY)));
+        viewPos = window.mapPixelToCoords(Paingine2D::Vector2i(mousePos.x, static_cast<int>(adjustedY)));
     } else {
         viewPos = window.mapPixelToCoords(mousePos);
     }
 
-    const sf::FloatRect buttonBounds = getGlobalBounds();
+    const Paingine2D::FloatRect buttonBounds = getGlobalBounds();
     return buttonBounds.contains(viewPos);
 }
 
-bool HUDButton::IsClicked(sf::RenderWindow& window) {
+bool HUDButton::IsClicked(Paingine2D::RenderWindow& window) {
     return HandleLeftClick(IsMouseOver(window));
 }
 
 void HUDButton::UpdatePosition() {
-    sf::Sprite::setPosition(AdjustForViewport(m_ScreenPosition));
+    Paingine2D::Sprite::setPosition(AdjustForViewport(m_ScreenPosition));
 }
 
-void HUDButton::Draw(sf::RenderWindow& window) {
+void HUDButton::Draw(Paingine2D::RenderWindow& window) {
     ScopedView screenView(window, window.getDefaultView());
 
-    sf::Vector2f originalPos = sf::Sprite::getPosition();
-    sf::Sprite::setPosition(AdjustForViewport(m_ScreenPosition));
+    Paingine2D::Vector2f originalPos = Paingine2D::Sprite::getPosition();
+    Paingine2D::Sprite::setPosition(AdjustForViewport(m_ScreenPosition));
 
     window.draw(*this);
 
-    sf::Sprite::setPosition(originalPos);
+    Paingine2D::Sprite::setPosition(originalPos);
 }
 
 void HUDButton::Show() {
@@ -112,22 +112,22 @@ void HUDButton::Hide() {
 }
 
 void HUDButton::CenterOrigin() {
-    const sf::FloatRect bounds = getLocalBounds();
+    const Paingine2D::FloatRect bounds = getLocalBounds();
     setOrigin(bounds.width / 2.f, bounds.height / 2.f);
     UpdatePosition();
 }
 
-sf::Vector2f HUDButton::AdjustForViewport(const sf::Vector2f& position) const {
+Paingine2D::Vector2f HUDButton::AdjustForViewport(const Paingine2D::Vector2f& position) const {
     auto window = Window::GetWindow();
     if (!window) {
         return position;
     }
 
-    sf::View currentView = window->getView();
-    sf::FloatRect viewport = currentView.getViewport();
-    sf::Vector2u windowSize = window->getSize();
+    Paingine2D::View currentView = window->getView();
+    Paingine2D::FloatRect viewport = currentView.getViewport();
+    Paingine2D::Vector2u windowSize = window->getSize();
 
-    sf::Vector2f adjustedPos = position;
+    Paingine2D::Vector2f adjustedPos = position;
     if (viewport.width < 1.0f) {
         adjustedPos.x = (viewport.left * windowSize.x) + (position.x * viewport.width);
     }
@@ -139,7 +139,7 @@ sf::Vector2f HUDButton::AdjustForViewport(const sf::Vector2f& position) const {
     return adjustedPos;
 }
 
-void HUDButton::ApplyTexture(std::shared_ptr<sf::Texture> texture, const std::string& errorMessage) {
+void HUDButton::ApplyTexture(std::shared_ptr<Paingine2D::Texture> texture, const std::string& errorMessage) {
     if (SetOwnedTexture(std::move(texture))) {
         CenterOrigin();
     } else {

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <SFML/Graphics/Color.hpp>
+#include <Paingine/Graphics/Color.hpp>
 
 #include "Core/Window.h"
 
@@ -13,7 +13,7 @@ public:
         int fixedTickRate = 66;
         bool verticalSync = true;
         bool enableImGui = true;
-        sf::Color clearColor = sf::Color::Black;
+        Paingine2D::Color clearColor = Paingine2D::Color::Black;
     };
 
     static void Init(int width = 1280, int height = 720, const std::string &title = "Window");

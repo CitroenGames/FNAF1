@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace {
-    std::vector<std::shared_ptr<sf::Texture>> LoadButtonTextures(const std::string &folder) {
+    std::vector<std::shared_ptr<Paingine2D::Texture>> LoadButtonTextures(const std::string &folder) {
         return {
             Resources::GetTexture("Graphics/Office/" + folder + "/NoActive.png"),
             Resources::GetTexture("Graphics/Office/" + folder + "/TopActive.png"),
@@ -36,7 +36,7 @@ Office::Office()
     m_RightButtons.SetTextures(LoadButtonTextures("ButtonsRight"));
 
     m_FreddyNoseButton.SetTexture(Resources::GetTexture("Graphics/ClickTeamFusion/1.png"));
-    m_FreddyNoseButton.SetPosition(sf::Vector2f(667, 212.5));
+    m_FreddyNoseButton.SetPosition(Paingine2D::Vector2f(667, 212.5));
     // The nose button is an invisible clickable hitbox, not a visible sprite.
     LayerManager::RemoveDrawable(&m_FreddyNoseButton);
 
@@ -86,10 +86,10 @@ Office::Office()
 
 void Office::Init() {
     // Create sprites
-    m_OfficeSprite = sf::Sprite(*m_OfficeTexture);
-    m_PowerOutageDarknessOverlay.setSize(sf::Vector2f(1600.0f, 720.0f));
+    m_OfficeSprite = Paingine2D::Sprite(*m_OfficeTexture);
+    m_PowerOutageDarknessOverlay.setSize(Paingine2D::Vector2f(1600.0f, 720.0f));
     m_PowerOutageDarknessOverlay.setPosition(0.0f, 0.0f);
-    m_PowerOutageDarknessOverlay.setFillColor(sf::Color(0, 0, 0, 215));
+    m_PowerOutageDarknessOverlay.setFillColor(Paingine2D::Color(0, 0, 0, 215));
 
     LayerManager::AddDrawable(OFFICE_LAYER, &m_OfficeSprite);
 

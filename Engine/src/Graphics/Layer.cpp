@@ -2,13 +2,13 @@
 
 #include <algorithm>
 
-void Layer::addDrawable(const sf::Drawable *drawable) {
+void Layer::addDrawable(const Paingine2D::Drawable *drawable) {
     if (drawable) {
         m_Drawables.push_back(drawable);
     }
 }
 
-void Layer::removeDrawable(const sf::Drawable *drawable) {
+void Layer::removeDrawable(const Paingine2D::Drawable *drawable) {
     if (!drawable) {
         return;
     }
@@ -19,7 +19,7 @@ void Layer::removeDrawable(const sf::Drawable *drawable) {
     }
 }
 
-void Layer::draw(sf::RenderWindow &window) const {
+void Layer::draw(Paingine2D::RenderWindow &window) const {
     for (const auto *drawable: m_Drawables) {
         if (drawable) {
             window.draw(*drawable);

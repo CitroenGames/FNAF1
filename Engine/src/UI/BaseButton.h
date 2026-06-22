@@ -2,24 +2,24 @@
 
 #include <memory>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <Paingine/Graphics/RenderWindow.hpp>
+#include <Paingine/Graphics/Sprite.hpp>
+#include <Paingine/Graphics/Texture.hpp>
 
-class BaseButton : public sf::Sprite {
+class BaseButton : public Paingine2D::Sprite {
 public:
     virtual ~BaseButton() = default;
 
     virtual bool IsMouseOver() const;
 
-    virtual bool IsMouseOver(sf::RenderWindow& window) const {
+    virtual bool IsMouseOver(Paingine2D::RenderWindow& window) const {
         (void) window;
         return false;
     }
 
     virtual bool IsClicked();
 
-    virtual bool IsClicked(sf::RenderWindow& window) {
+    virtual bool IsClicked(Paingine2D::RenderWindow& window) {
         (void) window;
         return false;
     }
@@ -27,8 +27,8 @@ public:
 protected:
     bool HandleLeftClick(bool isMouseOver);
 
-    bool SetOwnedTexture(std::shared_ptr<sf::Texture> texture);
+    bool SetOwnedTexture(std::shared_ptr<Paingine2D::Texture> texture);
 
-    std::shared_ptr<sf::Texture> m_ButtonTexture;
+    std::shared_ptr<Paingine2D::Texture> m_ButtonTexture;
     bool m_IsPressed = false;
 };

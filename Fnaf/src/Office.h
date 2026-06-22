@@ -43,22 +43,22 @@ public:
     }
 
 private:
-    sf::Sprite m_OfficeSprite;
-    sf::RectangleShape m_PowerOutageDarknessOverlay;
+    Paingine2D::Sprite m_OfficeSprite;
+    Paingine2D::RectangleShape m_PowerOutageDarknessOverlay;
     FlipBook m_LeftDoor, m_RightDoor;
 
-    std::shared_ptr<sf::Texture> m_OfficeTexture;
-    std::shared_ptr<sf::Texture> m_DoorTexture;
+    std::shared_ptr<Paingine2D::Texture> m_OfficeTexture;
+    std::shared_ptr<Paingine2D::Texture> m_DoorTexture;
 
     // Add textures for office lights
-    std::shared_ptr<sf::Texture> m_LeftLightTexture;
-    std::shared_ptr<sf::Texture> m_RightLightTexture;
-    std::shared_ptr<sf::Texture> m_LeftLightBonnieTexture;
-    std::shared_ptr<sf::Texture> m_RightLightChicaTexture;
+    std::shared_ptr<Paingine2D::Texture> m_LeftLightTexture;
+    std::shared_ptr<Paingine2D::Texture> m_RightLightTexture;
+    std::shared_ptr<Paingine2D::Texture> m_LeftLightBonnieTexture;
+    std::shared_ptr<Paingine2D::Texture> m_RightLightChicaTexture;
 
     // Power outage textures
-    std::shared_ptr<sf::Texture> m_PowerOutageTexture;   // Office_NoPower1.png (dim/dark)
-    std::shared_ptr<sf::Texture> m_PowerOutageTexture2;  // Office_NoPower2.png (Freddy face)
+    std::shared_ptr<Paingine2D::Texture> m_PowerOutageTexture;   // Office_NoPower1.png (dim/dark)
+    std::shared_ptr<Paingine2D::Texture> m_PowerOutageTexture2;  // Office_NoPower2.png (Freddy face)
     bool m_PowerOutage = false;
     float m_FlickerTimer = 0.0f;
     bool m_FlickerState = false;  // false=NoPower1, true=NoPower2

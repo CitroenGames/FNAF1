@@ -1,9 +1,9 @@
 @echo off
-echo Building Fnaf-SFML project...
+echo Building Fnaf1 project...
 echo.
 
 REM Generate and build the project
-sighmake Fnaf-SFML.buildscript
+sighmake Fnaf1.buildscript
 if %ERRORLEVEL% NEQ 0 (
     echo sighmake generation failed!
     pause
@@ -23,10 +23,10 @@ echo Starting game...
 echo.
 
 REM Run the executable
-if exist "build\bin\Release\Fnaf-SFML.exe" (
-    start "Fnaf-SFML" "build\bin\Release\Fnaf-SFML.exe"
+if exist "build\bin\Release\Fnaf1.exe" (
+    start "Fnaf1" "build\bin\Release\Fnaf1.exe"
 ) else (
-    echo Could not find build\bin\Release\Fnaf-SFML.exe. Please check build output.
+    echo Could not find build\bin\Release\Fnaf1.exe. Please check build output.
     pause
     exit /b 1
 )

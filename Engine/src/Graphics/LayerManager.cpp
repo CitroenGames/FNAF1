@@ -6,10 +6,10 @@
 
 namespace {
     std::map<int, Layer> g_Layers;
-    std::map<const sf::Drawable *, int> g_DrawableToLayer;
+    std::map<const Paingine2D::Drawable *, int> g_DrawableToLayer;
 }
 
-void LayerManager::AddDrawable(int layer, const sf::Drawable *drawable) {
+void LayerManager::AddDrawable(int layer, const Paingine2D::Drawable *drawable) {
     if (!drawable) return;
 
     auto it = g_DrawableToLayer.find(drawable);
@@ -22,7 +22,7 @@ void LayerManager::AddDrawable(int layer, const sf::Drawable *drawable) {
     g_DrawableToLayer[drawable] = layer;
 }
 
-void LayerManager::ChangeLayer(const sf::Drawable *drawable, int newLayer) {
+void LayerManager::ChangeLayer(const Paingine2D::Drawable *drawable, int newLayer) {
     if (!drawable) return;
 
     auto it = g_DrawableToLayer.find(drawable);
@@ -38,7 +38,7 @@ void LayerManager::ChangeLayer(const sf::Drawable *drawable, int newLayer) {
     }
 }
 
-void LayerManager::RemoveDrawable(const sf::Drawable *drawable) {
+void LayerManager::RemoveDrawable(const Paingine2D::Drawable *drawable) {
     if (!drawable) return;
 
     auto it = g_DrawableToLayer.find(drawable);
@@ -58,7 +58,7 @@ void LayerManager::Clear() {
     g_DrawableToLayer.clear();
 }
 
-void LayerManager::Draw(sf::RenderWindow &window) {
+void LayerManager::Draw(Paingine2D::RenderWindow &window) {
     for (const auto &layer: g_Layers) {
         layer.second.draw(window);
     }

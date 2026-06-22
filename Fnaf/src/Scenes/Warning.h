@@ -22,8 +22,8 @@ public:
     void SwitchToMainMenu();
 
 private:
-    std::shared_ptr<sf::Texture> m_WarningMessageTexture;
-    sf::Sprite m_WarningMessageSprite;
+    std::shared_ptr<Paingine2D::Texture> m_WarningMessageTexture;
+    Paingine2D::Sprite m_WarningMessageSprite;
 
     enum State { WARNING, SWITCHING, MAIN_MENU } m_State = WARNING;
 

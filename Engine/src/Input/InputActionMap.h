@@ -4,19 +4,19 @@
 #include <unordered_map>
 #include <vector>
 
-#include <SFML/Window/Keyboard.hpp>
+#include <Paingine/Window/Keyboard.hpp>
 
 class InputActionMap {
 public:
     struct Binding {
-        std::vector<sf::Keyboard::Key> keys;
+        std::vector<Paingine2D::Keyboard::Key> keys;
         bool down = false;
         bool pressed = false;
         bool released = false;
     };
 
-    void BindAction(const std::string &action, sf::Keyboard::Key key);
-    void BindAction(const std::string &action, std::vector<sf::Keyboard::Key> keys);
+    void BindAction(const std::string &action, Paingine2D::Keyboard::Key key);
+    void BindAction(const std::string &action, std::vector<Paingine2D::Keyboard::Key> keys);
     void UnbindAction(const std::string &action);
     void Clear();
 

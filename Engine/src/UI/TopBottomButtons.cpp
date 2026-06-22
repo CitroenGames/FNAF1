@@ -3,8 +3,8 @@
 #include <iostream>
 #include <utility>
 
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Window/Mouse.hpp>
+#include <Paingine/Graphics/Rect.hpp>
+#include <Paingine/Window/Mouse.hpp>
 
 #include "Core/Window.h"
 
@@ -21,7 +21,7 @@ void TopBottomButtons::SetCallbacks(
     m_OnBottomClick = std::move(onBottomClick);
 }
 
-void TopBottomButtons::SetTextures(const std::vector<std::shared_ptr<sf::Texture> > &textures) {
+void TopBottomButtons::SetTextures(const std::vector<std::shared_ptr<Paingine2D::Texture> > &textures) {
     if (textures.size() != 4) {
         std::cerr << "Error: Expected exactly 4 textures (NoActive, TopActive, BothActive, BottomActive)."
                   << std::endl;
@@ -39,16 +39,16 @@ void TopBottomButtons::updateButton() {
     }
 }
 
-void TopBottomButtons::updateButton(sf::RenderWindow &window) {
+void TopBottomButtons::updateButton(Paingine2D::RenderWindow &window) {
     if (!m_Enabled) {
         return;
     }
 
     if (IsMouseOver(window)) {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !m_WasMousePressed) {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            sf::Vector2f viewPos = window.mapPixelToCoords(mousePos);
-            sf::FloatRect buttonBounds = getGlobalBounds();
+        if (Paingine2D::Mouse::isButtonPressed(Paingine2D::Mouse::Left) && !m_WasMousePressed) {
+            Paingine2D::Vector2i mousePos = Paingine2D::Mouse::getPosition(window);
+            Paingine2D::Vector2f viewPos = window.mapPixelToCoords(mousePos);
+            Paingine2D::FloatRect buttonBounds = getGlobalBounds();
 
             const float relativeY = viewPos.y - buttonBounds.top;
             if (relativeY < buttonBounds.height / 2) {
@@ -68,7 +68,7 @@ void TopBottomButtons::updateButton(sf::RenderWindow &window) {
             m_WasMousePressed = true;
         }
 
-        if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (!Paingine2D::Mouse::isButtonPressed(Paingine2D::Mouse::Left)) {
             m_WasMousePressed = false;
         }
     }
@@ -146,6 +146,6 @@ void TopBottomButtons::updateTexture() {
     SetTexture(m_Textures[static_cast<int>(m_CurrentState)]);
 }
 
-bool TopBottomButtons::IsClicked(sf::RenderWindow &window) {
+bool TopBottomButtons::IsClicked(Paingine2D::RenderWindow &window) {
     return false;
 }

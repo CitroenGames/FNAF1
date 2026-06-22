@@ -1,27 +1,27 @@
 #pragma once
 
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <Paingine/Graphics/Rect.hpp>
+#include <Paingine/System/Vector2.hpp>
 
 namespace UI::Layout {
-    inline sf::Vector2f CenteredPosition(sf::Vector2f areaSize, const sf::FloatRect &bounds) {
+    inline Paingine2D::Vector2f CenteredPosition(Paingine2D::Vector2f areaSize, const Paingine2D::FloatRect &bounds) {
         return {
             (areaSize.x - bounds.width) * 0.5f - bounds.left,
             (areaSize.y - bounds.height) * 0.5f - bounds.top
         };
     }
 
-    inline sf::Vector2f CenteredPosition(const sf::Vector2u &areaSize, const sf::FloatRect &bounds) {
+    inline Paingine2D::Vector2f CenteredPosition(const Paingine2D::Vector2u &areaSize, const Paingine2D::FloatRect &bounds) {
         return CenteredPosition(
-            sf::Vector2f(static_cast<float>(areaSize.x), static_cast<float>(areaSize.y)),
+            Paingine2D::Vector2f(static_cast<float>(areaSize.x), static_cast<float>(areaSize.y)),
             bounds);
     }
 
-    inline float CenteredX(float areaWidth, const sf::FloatRect &bounds) {
+    inline float CenteredX(float areaWidth, const Paingine2D::FloatRect &bounds) {
         return (areaWidth - bounds.width) * 0.5f - bounds.left;
     }
 
-    inline float CenteredX(const sf::Vector2u &areaSize, const sf::FloatRect &bounds) {
+    inline float CenteredX(const Paingine2D::Vector2u &areaSize, const Paingine2D::FloatRect &bounds) {
         return CenteredX(static_cast<float>(areaSize.x), bounds);
     }
 }

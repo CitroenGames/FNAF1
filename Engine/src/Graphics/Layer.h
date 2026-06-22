@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <Paingine/Graphics/Drawable.hpp>
+#include <Paingine/Graphics/RenderWindow.hpp>
 
 class Layer {
 public:
@@ -11,14 +11,14 @@ public:
 
     ~Layer() = default;
 
-    void addDrawable(const sf::Drawable *drawable);
+    void addDrawable(const Paingine2D::Drawable *drawable);
 
-    void removeDrawable(const sf::Drawable *drawable);
+    void removeDrawable(const Paingine2D::Drawable *drawable);
 
-    void draw(sf::RenderWindow &window) const;
+    void draw(Paingine2D::RenderWindow &window) const;
 
     void clear();
 
 private:
-    std::vector<const sf::Drawable *> m_Drawables;
+    std::vector<const Paingine2D::Drawable *> m_Drawables;
 };

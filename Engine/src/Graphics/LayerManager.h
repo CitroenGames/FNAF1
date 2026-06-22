@@ -1,17 +1,17 @@
 #pragma once
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <Paingine/Graphics/Drawable.hpp>
+#include <Paingine/Graphics/RenderWindow.hpp>
 
 class LayerManager {
 public:
-    static void AddDrawable(int layer, const sf::Drawable *drawable);
+    static void AddDrawable(int layer, const Paingine2D::Drawable *drawable);
 
-    static void ChangeLayer(const sf::Drawable *drawable, int newLayer);
+    static void ChangeLayer(const Paingine2D::Drawable *drawable, int newLayer);
 
-    static void RemoveDrawable(const sf::Drawable *drawable);
+    static void RemoveDrawable(const Paingine2D::Drawable *drawable);
 
     static void Clear();
 
-    static void Draw(sf::RenderWindow &window);
+    static void Draw(Paingine2D::RenderWindow &window);
 };

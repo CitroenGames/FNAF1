@@ -39,16 +39,16 @@ private:
     std::string m_CurrentCamera;
 
     // Camera views
-    std::map<std::string, std::shared_ptr<sf::Sprite>> m_CameraViews;
-    std::map<std::string, std::map<std::string, std::shared_ptr<sf::Sprite>>> m_CameraStateViews;
+    std::map<std::string, std::shared_ptr<Paingine2D::Sprite>> m_CameraViews;
+    std::map<std::string, std::map<std::string, std::shared_ptr<Paingine2D::Sprite>>> m_CameraStateViews;
 
     // UI elements
-    std::shared_ptr<sf::Sprite> m_CameraMapSprite;
-    std::shared_ptr<sf::Sprite> m_CameraBorderSprite;
+    std::shared_ptr<Paingine2D::Sprite> m_CameraMapSprite;
+    std::shared_ptr<Paingine2D::Sprite> m_CameraBorderSprite;
     std::map<std::string, std::shared_ptr<ImageButton>> m_CameraButtons;
 
     // Camera name text overlays
-    std::map<std::string, std::shared_ptr<sf::Sprite>> m_CameraNameSprites;
+    std::map<std::string, std::shared_ptr<Paingine2D::Sprite>> m_CameraNameSprites;
 
     // Animation elements
     FlipBook m_CameraFlipAnimation;
@@ -60,10 +60,10 @@ private:
     float m_PanPauseTimer = 0.0f;      // countdown at edges before reversing
 
     // Base screen positions for UI elements (repositioned when panning)
-    sf::Vector2f m_MapBasePos = {1012.0f, 515.0f};
-    sf::Vector2f m_BorderBasePos = {640.0f, 360.0f};
-    std::map<std::string, sf::Vector2f> m_ButtonBasePositions;
-    std::map<std::string, sf::Vector2f> m_NameBasePositions;
+    Paingine2D::Vector2f m_MapBasePos = {1012.0f, 515.0f};
+    Paingine2D::Vector2f m_BorderBasePos = {640.0f, 360.0f};
+    std::map<std::string, Paingine2D::Vector2f> m_ButtonBasePositions;
+    std::map<std::string, Paingine2D::Vector2f> m_NameBasePositions;
 
     void InitializeCameraViews();
     void InitializeCameraButtons();

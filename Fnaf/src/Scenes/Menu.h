@@ -27,17 +27,17 @@ public:
     void ShowGlitchEffects();
 private:
     // Textures
-    std::shared_ptr<sf::Texture> m_Logo;
-    std::shared_ptr<sf::Texture> NewsPaperTexture;
-    std::shared_ptr<sf::Texture> m_WarningMessageTexture;
-    std::shared_ptr<sf::Texture> m_LoadingScreenTexture;
+    std::shared_ptr<Paingine2D::Texture> m_Logo;
+    std::shared_ptr<Paingine2D::Texture> NewsPaperTexture;
+    std::shared_ptr<Paingine2D::Texture> m_WarningMessageTexture;
+    std::shared_ptr<Paingine2D::Texture> m_LoadingScreenTexture;
 
-    sf::Sprite m_LogoSprite;
-    sf::Sprite NewsPaperSprite;
-    sf::Sprite m_WarningMessageSprite;
-    sf::Sprite m_LoadingScreenSprite;
-    sf::Text m_TimeText;
-    sf::Text m_NightText;
+    Paingine2D::Sprite m_LogoSprite;
+    Paingine2D::Sprite NewsPaperSprite;
+    Paingine2D::Sprite m_WarningMessageSprite;
+    Paingine2D::Sprite m_LoadingScreenSprite;
+    Paingine2D::Text m_TimeText;
+    Paingine2D::Text m_NightText;
 
     ImageButton newbutton;
     GlitchEffect m_FreddyGlitchEffect;
@@ -63,9 +63,9 @@ private:
 
 private:
     // Static texture collections
-    std::vector<std::shared_ptr<sf::Texture>> m_NoiseTextures;
-    std::vector<std::shared_ptr<sf::Texture>> m_WhiteTextures;
+    std::vector<std::shared_ptr<Paingine2D::Texture>> m_NoiseTextures;
+    std::vector<std::shared_ptr<Paingine2D::Texture>> m_WhiteTextures;
 
 
-    std::shared_ptr<sf::Font> font = nullptr;
+    std::shared_ptr<Paingine2D::Font> font = nullptr;
 };

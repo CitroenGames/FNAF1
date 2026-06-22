@@ -3,12 +3,12 @@
 #include <memory>
 #include <vector>
 
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <Paingine/Graphics/Sprite.hpp>
+#include <Paingine/Graphics/Texture.hpp>
 
 class GlitchEffect {
 private:
-    std::vector<std::shared_ptr<sf::Sprite>> m_Frames;
+    std::vector<std::shared_ptr<Paingine2D::Sprite>> m_Frames;
     int m_Layer;
     int m_CurrentFrame;
     int m_PreviousFrame;  // Track previous frame for proper cleanup
@@ -30,10 +30,10 @@ public:
     void Stop();
     void Kill();
 
-    void AddFrame(std::shared_ptr<sf::Texture> texture);
-    void AddFrame(std::shared_ptr<sf::Sprite> sprite);
-    void AddFrames(const std::vector<std::shared_ptr<sf::Sprite>>& sprites);
-    void AddFrames(const std::vector<std::shared_ptr<sf::Texture>>& textures);
+    void AddFrame(std::shared_ptr<Paingine2D::Texture> texture);
+    void AddFrame(std::shared_ptr<Paingine2D::Sprite> sprite);
+    void AddFrames(const std::vector<std::shared_ptr<Paingine2D::Sprite>>& sprites);
+    void AddFrames(const std::vector<std::shared_ptr<Paingine2D::Texture>>& textures);
 
     void SetPosition(float x, float y);
     void SetLayer(int layer);

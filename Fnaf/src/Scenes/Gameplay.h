@@ -40,14 +40,14 @@ private:
     std::shared_ptr<Office> m_OfficeComponent;
 
     // Power HUD
-    std::shared_ptr<sf::Texture> m_PowerLeftTexture;
-    std::shared_ptr<sf::Texture> m_UsageLabelTexture;
-    std::array<std::shared_ptr<sf::Texture>, 5> m_UsageBarTextures;
-    sf::Sprite m_PowerLeftSprite;
-    sf::Sprite m_UsageLabelSprite;
-    sf::Sprite m_UsageBarsSprite;
-    std::shared_ptr<sf::Font> m_PowerFont;
-    sf::Text m_PowerPercentText;
+    std::shared_ptr<Paingine2D::Texture> m_PowerLeftTexture;
+    std::shared_ptr<Paingine2D::Texture> m_UsageLabelTexture;
+    std::array<std::shared_ptr<Paingine2D::Texture>, 5> m_UsageBarTextures;
+    Paingine2D::Sprite m_PowerLeftSprite;
+    Paingine2D::Sprite m_UsageLabelSprite;
+    Paingine2D::Sprite m_UsageBarsSprite;
+    std::shared_ptr<Paingine2D::Font> m_PowerFont;
+    Paingine2D::Text m_PowerPercentText;
 
     enum class DeathSequenceState {
         None,
@@ -57,8 +57,8 @@ private:
 
     DeathSequenceState m_DeathSequenceState = DeathSequenceState::None;
     JumpscareType m_ActiveJumpscare = JumpscareType::None;
-    std::vector<std::shared_ptr<sf::Texture>> m_JumpscareFrames;
-    sf::Sprite m_JumpscareSprite;
+    std::vector<std::shared_ptr<Paingine2D::Texture>> m_JumpscareFrames;
+    Paingine2D::Sprite m_JumpscareSprite;
     std::shared_ptr<AudioClip> m_JumpscareSound;
     float m_JumpscareFrameTimer = 0.0f;
     float m_JumpscareTotalTimer = 0.0f;
@@ -67,16 +67,16 @@ private:
     std::size_t m_JumpscareFrameIndex = 0;
     bool m_DiscardNextJumpscareDelta = false;
 
-    std::shared_ptr<sf::Texture> m_GameOverBackgroundTexture;
-    std::shared_ptr<sf::Texture> m_GameOverTextTexture;
-    sf::Sprite m_GameOverBackgroundSprite;
-    sf::Sprite m_GameOverTextSprite;
+    std::shared_ptr<Paingine2D::Texture> m_GameOverBackgroundTexture;
+    std::shared_ptr<Paingine2D::Texture> m_GameOverTextTexture;
+    Paingine2D::Sprite m_GameOverBackgroundSprite;
+    Paingine2D::Sprite m_GameOverTextSprite;
     float m_GameOverTimer = 0.0f;
 
     void StartPendingJumpscare();
     void StartJumpscare(JumpscareType type);
     void UpdateDeathSequence(float deltaTime);
     void SwitchToGameOver();
-    void DrawDeathSequence(sf::RenderWindow &window);
+    void DrawDeathSequence(Paingine2D::RenderWindow &window);
     bool IsDeathSequenceActive() const { return m_DeathSequenceState != DeathSequenceState::None; }
 };

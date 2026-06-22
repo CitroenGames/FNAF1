@@ -1,11 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/View.hpp>
+#include <Paingine/Graphics/RenderTarget.hpp>
+#include <Paingine/Graphics/View.hpp>
 
 class ScopedView {
 public:
-    ScopedView(sf::RenderTarget &target, const sf::View &view)
+    ScopedView(Paingine2D::RenderTarget &target, const Paingine2D::View &view)
         : m_Target(target)
         , m_PreviousView(target.getView()) {
         m_Target.setView(view);
@@ -19,6 +19,6 @@ public:
     }
 
 private:
-    sf::RenderTarget &m_Target;
-    sf::View m_PreviousView;
+    Paingine2D::RenderTarget &m_Target;
+    Paingine2D::View m_PreviousView;
 };

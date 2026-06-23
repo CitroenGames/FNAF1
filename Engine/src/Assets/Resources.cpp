@@ -2,8 +2,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <filesystem>
-#include <fstream>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -13,6 +11,7 @@
 #include <Paingine/Graphics/Font.hpp>
 #include <Paingine/Graphics/Texture.hpp>
 
+#include "Assets/AssetFileSystem.h"
 #include "Audio/AudioClip.h"
 #include "Pak.h"
 
@@ -27,77 +26,12 @@ namespace {
     std::map<std::string, std::shared_ptr<Paingine2D::Font> > g_Fonts;
     std::map<std::string, std::shared_ptr<std::vector<uint8_t> > > g_FontBuffers;
 
-    std::string NormalizeAssetPath(std::filesystem::path path) {
-        return path.generic_string();
-    }
-
-    std::filesystem::path ResolveFilesystemAssetPath(const std::string &filename) {
-        const std::filesystem::path requestedPath(filename);
-        if (requestedPath.is_absolute()) {
-            return requestedPath;
-        }
-
-        const std::filesystem::path rootedPath = std::filesystem::path(g_AssetRoot) / requestedPath;
-        if (std::filesystem::exists(rootedPath)) {
-            return rootedPath;
-        }
-
-        return requestedPath;
-    }
-
     std::shared_ptr<std::vector<uint8_t> > LoadPakAsset(const std::string &filename) {
         if (g_PakHandler == nullptr || g_PakFile.empty()) {
             return nullptr;
         }
 
         return g_PakHandler->LoadFile(g_PakFile, filename);
-    }
-
-    std::shared_ptr<std::vector<uint8_t> > LoadFilesystemAsset(const std::string &filename) {
-        if (!g_FileSystemFallbackEnabled) {
-            return nullptr;
-        }
-
-        const std::filesystem::path path = ResolveFilesystemAssetPath(filename);
-        std::ifstream file(path, std::ios::binary | std::ios::ate);
-        if (!file) {
-            return nullptr;
-        }
-
-        const std::streamsize size = file.tellg();
-        if (size < 0) {
-            return nullptr;
-        }
-
-        auto data = std::make_shared<std::vector<uint8_t> >(static_cast<size_t>(size));
-        file.seekg(0, std::ios::beg);
-        if (size > 0 && !file.read(reinterpret_cast<char *>(data->data()), size)) {
-            return nullptr;
-        }
-
-        return data;
-    }
-
-    void AppendFilesystemFiles(std::vector<std::string> &files, const std::string &prefix) {
-        if (!g_FileSystemFallbackEnabled) {
-            return;
-        }
-
-        const std::filesystem::path root(g_AssetRoot);
-        if (!std::filesystem::exists(root)) {
-            return;
-        }
-
-        for (const auto &entry : std::filesystem::recursive_directory_iterator(root)) {
-            if (!entry.is_regular_file()) {
-                continue;
-            }
-
-            const auto relative = NormalizeAssetPath(std::filesystem::relative(entry.path(), root));
-            if (prefix.empty() || relative.starts_with(prefix)) {
-                files.push_back(relative);
-            }
-        }
     }
 }
 
@@ -129,7 +63,7 @@ std::shared_ptr<std::vector<uint8_t> > Resources::LoadBytes(const std::string &f
         return data;
     }
 
-    if (auto data = LoadFilesystemAsset(filename)) {
+    if (auto data = AssetFileSystem::LoadBytes(g_AssetRoot, filename, g_FileSystemFallbackEnabled)) {
         return data;
     }
 
@@ -205,7 +139,7 @@ std::vector<std::string> Resources::ListFiles() {
         files = g_PakHandler->ListFiles(g_PakFile);
     }
 
-    AppendFilesystemFiles(files, "");
+    AssetFileSystem::AppendFiles(files, g_AssetRoot, "", g_FileSystemFallbackEnabled);
     std::sort(files.begin(), files.end());
     files.erase(std::unique(files.begin(), files.end()), files.end());
     return files;
@@ -217,7 +151,7 @@ std::vector<std::string> Resources::ListFilesWithPrefix(const std::string &prefi
         files = g_PakHandler->ListFilesWithPrefix(g_PakFile, prefix);
     }
 
-    AppendFilesystemFiles(files, prefix);
+    AssetFileSystem::AppendFiles(files, g_AssetRoot, prefix, g_FileSystemFallbackEnabled);
     std::sort(files.begin(), files.end());
     files.erase(std::unique(files.begin(), files.end()), files.end());
     return files;

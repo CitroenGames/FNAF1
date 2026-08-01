@@ -15,6 +15,7 @@
 namespace {
     std::shared_ptr<Paingine2D::RenderWindow> g_Window;
     Application::Config g_Config;
+    bool g_Initialized = false;
 }
 
 void Application::Init(int width, int height, const std::string &title) {
@@ -32,9 +33,13 @@ void Application::Init(int width, int height, const std::string &title) {
 }
 
 void Application::Init(const Config &config) {
+    if (g_Initialized) {
+        return;
+    }
+
     g_Config = config;
     if (g_Config.fixedTickRate <= 0) {
-        g_Config.fixedTickRate = 66;
+        g_Config.fixedTickRate = DEFAULT_FIXED_TICK_RATE;
     }
 
     g_Window = Window::Init(g_Config.window);
@@ -43,6 +48,7 @@ void Application::Init(const Config &config) {
         ImGui::Paingine::Init(*g_Window, true);
     }
     Window::UpdateViewport();
+    g_Initialized = true;
 }
 
 Application::Config Application::NativeResolutionConfig(
@@ -75,6 +81,12 @@ void Application::Run() {
     double accumulator = 0.0;
     const double frameTime = 1.0 / static_cast<double>(g_Config.fixedTickRate);
 
+    // A long stall (asset load, window drag, breakpoint) would otherwise leave the
+    // accumulator holding thousands of pending ticks, and running them all makes the
+    // next frame longer still. Cap the catch-up and drop the excess time instead.
+    constexpr int MAX_FIXED_STEPS_PER_FRAME = 5;
+    const double maxAccumulator = frameTime * MAX_FIXED_STEPS_PER_FRAME;
+
     Paingine2D::Event event;
     Paingine2D::Clock deltaClock;
 
@@ -97,7 +109,7 @@ void Application::Run() {
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsedTime = currentTime - previousTime;
         previousTime = currentTime;
-        accumulator += elapsedTime.count();
+        accumulator = std::min(accumulator + elapsedTime.count(), maxAccumulator);
 
         if (g_Config.enableImGui) {
             ImGui::Paingine::Update(*g_Window, deltaClock.restart());
@@ -108,8 +120,7 @@ void Application::Run() {
             accumulator -= frameTime;
         }
 
-        double deltaTime = elapsedTime.count();
-        SceneManager::Update(deltaTime);
+        SceneManager::Update(elapsedTime.count());
 
         g_Window->clear(g_Config.clearColor);
         LayerManager::Draw(*g_Window);
@@ -124,7 +135,13 @@ void Application::Run() {
     Application::Destroy();
 }
 
+// Run() calls this on exit, so it must tolerate a second explicit call from the host.
 void Application::Destroy() {
+    if (!g_Initialized) {
+        return;
+    }
+    g_Initialized = false;
+
     PROFILE_BEGIN("Application Shutdown");
     LayerManager::Clear();
     SceneManager::Destroy();
@@ -139,4 +156,9 @@ void Application::Destroy() {
 
 const Application::Config &Application::GetConfig() {
     return g_Config;
+}
+
+float Application::GetFixedDeltaTime() {
+    const int tickRate = g_Config.fixedTickRate > 0 ? g_Config.fixedTickRate : DEFAULT_FIXED_TICK_RATE;
+    return 1.0f / static_cast<float>(tickRate);
 }

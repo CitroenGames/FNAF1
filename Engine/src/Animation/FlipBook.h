@@ -8,9 +8,21 @@
 
 class FlipBook {
 public:
+    static constexpr float DEFAULT_FRAME_DURATION = 0.1f;
+    // Floor for the per-frame duration; see SetFrameDuration.
+    static constexpr float MIN_FRAME_DURATION = 1.0f / 1000.0f;
+
     FlipBook();
     ~FlipBook();
-    FlipBook(int layer, float frameDuration = 0.1f, bool loop = true);
+    FlipBook(int layer, float frameDuration = DEFAULT_FRAME_DURATION, bool loop = true);
+
+    // LayerManager stores raw Sprite* for the registered frame, so a copy would
+    // produce two owners for one registration. Moves are supported and hand off
+    // that registration; assignment unregisters whatever the target held first.
+    FlipBook(const FlipBook &) = delete;
+    FlipBook &operator=(const FlipBook &) = delete;
+    FlipBook(FlipBook &&other) noexcept;
+    FlipBook &operator=(FlipBook &&other) noexcept;
 
     // Add frames to the flipbook
     void AddFrame(std::shared_ptr<Paingine2D::Texture> texture);
@@ -40,6 +52,9 @@ public:
     const Paingine2D::Sprite* GetCurrentFrame() const;
 
 private:
+    // Paingine2D::Sprite holds a non-owning const Texture*, so any texture a frame
+    // was built from must be kept alive here for as long as the sprite exists.
+    std::vector<std::shared_ptr<Paingine2D::Texture>> m_OwnedTextures;
     std::vector<std::shared_ptr<Paingine2D::Sprite>> m_Frames;
     float m_FrameDuration;
     float m_ElapsedTime;

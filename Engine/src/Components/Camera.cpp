@@ -212,14 +212,14 @@ void Camera2D::updateViewport(const Paingine2D::Vector2u &actualWindowSize) noex
     view.setViewport(viewport);
 }
 
+// While maintainResolution is on, the letterbox viewport is recomputed every frame
+// from the real target size in applyTo(). This overload only has to handle the
+// transition to off, which must restore the full-target viewport -- otherwise the
+// camera stays letterboxed forever after maintainResolution is disabled.
 void Camera2D::updateViewport() noexcept {
     if (!maintainResolution) {
-        return;
+        view.setViewport(Paingine2D::FloatRect(0.f, 0.f, 1.f, 1.f));
     }
-
-    Paingine2D::Vector2f viewSize = view.getSize();
-    updateViewport(Paingine2D::Vector2u(static_cast<unsigned int>(viewSize.x),
-                                static_cast<unsigned int>(viewSize.y)));
 }
 
 void Camera2D::setTargetPosition(const Paingine2D::Vector2f &target) noexcept {

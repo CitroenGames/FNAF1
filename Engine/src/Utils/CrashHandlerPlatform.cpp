@@ -339,6 +339,8 @@ namespace Paingine2D {
             handler->m_platform->WriteLogFile(*handler, exceptionPointers, crashReportPath);
         }
 
+        // Deliberately bypasses Utils/Log here: this runs from an exception filter,
+        // where taking the logger's mutex could deadlock against the faulting thread.
         std::cerr << "The application has crashed. A crash report has been saved to: "
                   << crashReportPath << ".dmp" << std::endl;
 
@@ -414,6 +416,8 @@ namespace Paingine2D {
         const std::string crashReportPath = handler->GenerateCrashReportPath();
         handler->m_platform->WriteUnixCrashReport(*handler, signalNumber, info, crashReportPath);
 
+        // Deliberately bypasses Utils/Log here: this runs from a signal handler,
+        // where taking the logger's mutex is not async-signal-safe.
         std::cerr << "The application has crashed. A crash report has been saved to: "
                   << crashReportPath << ".log" << std::endl;
 

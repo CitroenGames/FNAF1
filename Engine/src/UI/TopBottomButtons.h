@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -17,6 +18,9 @@ public:
         BothActive = 2,
         BottomActive = 3
     };
+
+    // SetTextures expects one texture per ButtonState, indexed by its value.
+    static constexpr std::size_t StateCount = 4;
 
     TopBottomButtons();
 

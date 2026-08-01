@@ -1,31 +1,92 @@
 #include "FlipBook.h"
 
+#include <algorithm>
+#include <cmath>
 #include <utility>
 
 #include "Graphics/LayerManager.h"
+#include "Utils/Log.h"
 
 FlipBook::FlipBook()
-    : m_Layer(0), m_FrameDuration(0), m_ElapsedTime(0.f),
-    m_CurrentFrame(0), m_IsPlayingFlag(false), m_Loop(false),
-    m_IsForward(true) {
+    : FlipBook(0, DEFAULT_FRAME_DURATION, false) {
+}
+
+// Initialiser order must match the declaration order in FlipBook.h.
+FlipBook::FlipBook(int layer, float frameDuration, bool loop)
+    : m_FrameDuration(std::max(frameDuration, MIN_FRAME_DURATION))
+    , m_ElapsedTime(0.f)
+    , m_CurrentFrame(0)
+    , m_IsPlayingFlag(false)
+    , m_Loop(loop)
+    , m_Layer(layer)
+    , m_IsForward(true) {
 }
 
 FlipBook::~FlipBook() {
     Cleanup();
 }
 
-FlipBook::FlipBook(int layer, float frameDuration, bool loop)
-    : m_Layer(layer), m_FrameDuration(frameDuration), m_ElapsedTime(0.f),
-    m_CurrentFrame(0), m_IsPlayingFlag(false), m_Loop(loop),
-    m_IsForward(true) {
+// The frames themselves are heap-allocated behind shared_ptr, so their addresses
+// survive the move and any LayerManager registration stays valid -- it simply
+// belongs to the moved-to FlipBook now.
+FlipBook::FlipBook(FlipBook &&other) noexcept
+    : m_OwnedTextures(std::move(other.m_OwnedTextures))
+    , m_Frames(std::move(other.m_Frames))
+    , m_FrameDuration(other.m_FrameDuration)
+    , m_ElapsedTime(other.m_ElapsedTime)
+    , m_CurrentFrame(other.m_CurrentFrame)
+    , m_IsPlayingFlag(other.m_IsPlayingFlag)
+    , m_Loop(other.m_Loop)
+    , m_Layer(other.m_Layer)
+    , m_IsForward(other.m_IsForward) {
+    other.m_OwnedTextures.clear();
+    other.m_Frames.clear();
+    other.m_IsPlayingFlag = false;
+    other.m_CurrentFrame = 0;
+}
+
+FlipBook &FlipBook::operator=(FlipBook &&other) noexcept {
+    if (this == &other) {
+        return *this;
+    }
+
+    // Drop our own registration before the sprites backing it go away.
+    Cleanup();
+
+    m_OwnedTextures = std::move(other.m_OwnedTextures);
+    m_Frames = std::move(other.m_Frames);
+    m_FrameDuration = other.m_FrameDuration;
+    m_ElapsedTime = other.m_ElapsedTime;
+    m_CurrentFrame = other.m_CurrentFrame;
+    m_IsPlayingFlag = other.m_IsPlayingFlag;
+    m_Loop = other.m_Loop;
+    m_Layer = other.m_Layer;
+    m_IsForward = other.m_IsForward;
+
+    other.m_OwnedTextures.clear();
+    other.m_Frames.clear();
+    other.m_IsPlayingFlag = false;
+    other.m_CurrentFrame = 0;
+    return *this;
 }
 
 void FlipBook::AddFrame(std::shared_ptr<Paingine2D::Texture> texture) {
+    if (!texture) {
+        Log::Error("FlipBook", "ignoring null texture frame");
+        return;
+    }
+
     auto sprite = std::make_shared<Paingine2D::Sprite>(*texture);
+    m_OwnedTextures.push_back(std::move(texture));
     AddSpriteFrame(std::move(sprite));
 }
 
 void FlipBook::AddFrame(std::shared_ptr<Paingine2D::Sprite> sprite) {
+    if (!sprite) {
+        Log::Error("FlipBook", "ignoring null sprite frame");
+        return;
+    }
+
     AddSpriteFrame(std::move(sprite));
 }
 
@@ -36,6 +97,8 @@ void FlipBook::AddFrames(const std::vector<std::shared_ptr<Paingine2D::Sprite>>&
 }
 
 void FlipBook::AddFrames(const std::vector<Paingine2D::Texture>& textures) {
+    // The caller keeps ownership of the vector, so each texture is copied into
+    // storage this FlipBook owns before a sprite is pointed at it.
     for (const auto& texture : textures) {
         AddFrame(std::make_shared<Paingine2D::Texture>(texture));
     }
@@ -47,43 +110,44 @@ void FlipBook::Update(float deltaTime) {
     }
 
     m_ElapsedTime += deltaTime;
-    if (m_ElapsedTime >= m_FrameDuration) {
-        m_ElapsedTime = 0.0f;
+    if (m_ElapsedTime < m_FrameDuration) {
+        return;
+    }
 
-        // Store old frame index for cleanup
-        size_t oldFrame = m_CurrentFrame;
+    // Carry the remainder instead of zeroing it, so playback does not lose up to
+    // one tick of time per frame and drift slower than the requested duration.
+    m_ElapsedTime = std::fmod(m_ElapsedTime, m_FrameDuration);
 
-        // Update frame index
-        if (m_IsForward) {
-            m_CurrentFrame++;
-            if (m_CurrentFrame >= m_Frames.size()) {
-                if (m_Loop) {
-                    m_CurrentFrame = 0;
-                }
-                else {
-                    m_CurrentFrame = m_Frames.size() - 1;
-                    m_IsPlayingFlag = false;
-                }
+    const std::size_t oldFrame = m_CurrentFrame;
+    if (m_IsForward) {
+        m_CurrentFrame++;
+        if (m_CurrentFrame >= m_Frames.size()) {
+            if (m_Loop) {
+                m_CurrentFrame = 0;
+            }
+            else {
+                m_CurrentFrame = m_Frames.size() - 1;
+                m_IsPlayingFlag = false;
+            }
+        }
+    }
+    else {
+        if (m_CurrentFrame == 0) {
+            if (m_Loop) {
+                m_CurrentFrame = m_Frames.size() - 1;
+            }
+            else {
+                m_IsPlayingFlag = false;
             }
         }
         else {
-            if (m_CurrentFrame == 0) {
-                if (m_Loop) {
-                    m_CurrentFrame = m_Frames.size() - 1;
-                }
-                else {
-                    m_IsPlayingFlag = false;
-                }
-            }
-            else {
-                m_CurrentFrame--;
-            }
+            m_CurrentFrame--;
         }
+    }
 
-        // Update frame registration only if needed
-        if (oldFrame != m_CurrentFrame) {
-            UpdateLayerManagerRegistration();
-        }
+    // Update frame registration only if needed
+    if (oldFrame != m_CurrentFrame) {
+        UpdateLayerManagerRegistration();
     }
 }
 
@@ -155,7 +219,9 @@ const Paingine2D::Sprite* FlipBook::GetCurrentFrame() const {
 }
 
 void FlipBook::SetFrameDuration(float duration) {
-    m_FrameDuration = duration;
+    // A zero/negative duration would advance a frame on every tick and make
+    // the fmod in Update ill-defined.
+    m_FrameDuration = std::max(duration, MIN_FRAME_DURATION);
 }
 
 void FlipBook::SetLoop(bool shouldLoop) {

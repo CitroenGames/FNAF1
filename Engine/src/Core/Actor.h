@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <memory>
 #include <string>
 
@@ -9,6 +8,7 @@
 
 #include "Graphics/LayerManager.h"
 #include "Assets/Resources.h"
+#include "Utils/Log.h"
 
 class Actor {
 public:
@@ -39,7 +39,7 @@ public:
     bool LoadTexture(const std::string &texturePath) {
         auto texture = Resources::GetTexture(texturePath);
         if (!texture) {
-            std::cerr << "Failed to load texture: " << texturePath << std::endl;
+            Log::Error("Actor", "failed to load texture " + texturePath);
             return false;
         }
         m_Sprite.setTexture(*texture);

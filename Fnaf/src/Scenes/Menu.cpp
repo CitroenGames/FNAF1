@@ -2,16 +2,13 @@
 #include "Scene/SceneManager.h"
 #include "Scenes/Gameplay.h"
 #include "Assets/Resources.h"
+#include "Core/Application.h"
 #include "Core/Window.h"
 #include "Graphics/LayerManager.h"
 #include "LayerDefines.h"
 #include "Utils/Helpers.h"
 #include "Audio/AudioManager.h"
 #include "UI/Layout.h"
-
-namespace {
-    constexpr float FIXED_TICK_RATE = 66.0f;
-}
 
 Menu::Menu() {
     // Preload audio - no longer keeping music objects directly in the Menu class
@@ -185,13 +182,14 @@ void Menu::SwitchToGameplay() {
 }
 
 void Menu::FixedUpdate() {
+    const float fixedDeltaTime = Application::GetFixedDeltaTime();
     m_NewsPaperTimer += 1;
-    const float seconds = static_cast<float>(m_NewsPaperTimer) / FIXED_TICK_RATE;
+    const float seconds = static_cast<float>(m_NewsPaperTimer) * fixedDeltaTime;
     switch (m_GameplayTransitionState) {
         case MAIN_MENU: {
-            m_FreddyGlitchEffect.Update();
-            m_StaticGlitchEffect.Update();
-            m_WhiteGlitchEffect.Update();
+            m_FreddyGlitchEffect.Update(fixedDeltaTime);
+            m_StaticGlitchEffect.Update(fixedDeltaTime);
+            m_WhiteGlitchEffect.Update(fixedDeltaTime);
 
             if (newbutton.IsClicked()) {
                 // Hide all menu elements when transitioning to newspaper

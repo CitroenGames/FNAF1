@@ -1,12 +1,12 @@
 #include "UI/TopBottomButtons.h"
 
-#include <iostream>
 #include <utility>
 
 #include <Paingine/Graphics/Rect.hpp>
 #include <Paingine/Window/Mouse.hpp>
 
 #include "Core/Window.h"
+#include "Utils/Log.h"
 
 TopBottomButtons::TopBottomButtons()
     : m_CurrentState(ButtonState::NoActive)
@@ -22,14 +22,15 @@ void TopBottomButtons::SetCallbacks(
 }
 
 void TopBottomButtons::SetTextures(const std::vector<std::shared_ptr<Paingine2D::Texture> > &textures) {
-    if (textures.size() != 4) {
-        std::cerr << "Error: Expected exactly 4 textures (NoActive, TopActive, BothActive, BottomActive)."
-                  << std::endl;
+    if (textures.size() != StateCount) {
+        Log::Error("TopBottomButtons",
+                   "expected exactly 4 textures (NoActive, TopActive, BothActive, BottomActive), got "
+                   + std::to_string(textures.size()));
         return;
     }
 
     m_Textures = textures;
-    SetTexture(m_Textures[static_cast<int>(ButtonState::NoActive)]);
+    SetTexture(m_Textures[static_cast<std::size_t>(ButtonState::NoActive)]);
 }
 
 void TopBottomButtons::updateButton() {
@@ -139,13 +140,16 @@ void TopBottomButtons::updateBottomState() {
 }
 
 void TopBottomButtons::updateTexture() {
-    if (m_Textures.empty()) {
+    const auto index = static_cast<std::size_t>(m_CurrentState);
+    if (index >= m_Textures.size()) {
         return;
     }
 
-    SetTexture(m_Textures[static_cast<int>(m_CurrentState)]);
+    SetTexture(m_Textures[index]);
 }
 
-bool TopBottomButtons::IsClicked(Paingine2D::RenderWindow &window) {
+// This control routes clicks through updateButton(), which distinguishes the
+// top half from the bottom half; the plain "was it clicked" query is meaningless here.
+bool TopBottomButtons::IsClicked(Paingine2D::RenderWindow &) {
     return false;
 }

@@ -5,7 +5,7 @@
 #include <functional>
 #include <thread>
 
-std::unique_ptr<InstrumentationTimer> ManualInstrumentationScope::s_CurrentTimer;
+std::vector<std::unique_ptr<InstrumentationTimer> > ManualInstrumentationScope::s_TimerStack;
 
 Instrumentor::Instrumentor()
     : m_CurrentSession(nullptr), m_ProfileCount(0), m_Active(false) {
@@ -74,17 +74,17 @@ void Instrumentor::WriteProfile(const ProfileResult &result) {
     m_OutputStream << "\"ts\":" << result.Start;
     m_OutputStream << "}";
 
-    m_OutputStream.flush();
+    // Records are written from the per-frame hot loop, so this deliberately relies
+    // on the stream's own buffering. EndSession and the signal handler below both
+    // flush, which covers clean exits and crashes alike.
 }
 
 void Instrumentor::WriteHeader() {
     m_OutputStream << "{\"otherData\": {},\"traceEvents\":[";
-    m_OutputStream.flush();
 }
 
 void Instrumentor::WriteFooter() {
     m_OutputStream << "]}";
-    m_OutputStream.flush();
 }
 
 Instrumentor &Instrumentor::Get() {
@@ -118,21 +118,28 @@ void InstrumentationTimer::Stop() {
 }
 
 void ManualInstrumentationScope::Begin(const char *name) {
-    if (s_CurrentTimer) {
-        s_CurrentTimer->Stop();
-    }
-
-    s_CurrentTimer = std::make_unique<InstrumentationTimer>(name);
+    s_TimerStack.push_back(std::make_unique<InstrumentationTimer>(name));
 }
 
 void ManualInstrumentationScope::End() {
-    if (s_CurrentTimer) {
-        s_CurrentTimer->Stop();
-        s_CurrentTimer.reset();
+    if (s_TimerStack.empty()) {
+        return;
+    }
+
+    s_TimerStack.back()->Stop();
+    s_TimerStack.pop_back();
+}
+
+void ManualInstrumentationScope::EndAll() {
+    while (!s_TimerStack.empty()) {
+        End();
     }
 }
 
 static void ProfilerSignalHandler(int signal) {
+    // Close any regions still on the stack so the trace file stays well-formed
+    // when the process dies mid-frame, then flush it via EndSession.
+    ManualInstrumentationScope::EndAll();
     Instrumentor::Get().EndSession();
 
     std::signal(signal, SIG_DFL);

@@ -6,8 +6,12 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
+// Define PROFILING=0 in the build to compile every profiling macro out entirely.
+#ifndef PROFILING
 #define PROFILING 1
+#endif
 
 struct ProfileResult {
     std::string Name;
@@ -55,13 +59,16 @@ private:
     bool m_Stopped;
 };
 
+// Backs PROFILE_BEGIN / PROFILE_END. Scopes nest: Begin pushes and End pops,
+// so an inner region no longer terminates the region that encloses it.
 class ManualInstrumentationScope {
 private:
-    static std::unique_ptr<InstrumentationTimer> s_CurrentTimer;
+    static std::vector<std::unique_ptr<InstrumentationTimer> > s_TimerStack;
 
 public:
     static void Begin(const char *name);
     static void End();
+    static void EndAll();
 };
 
 #if PROFILING

@@ -2,19 +2,31 @@
 
 #include <algorithm>
 #include <cstring>
-#include <iostream>
 #include <utility>
 
 #include <miniaudio.h>
 
+#include "Utils/Log.h"
+
 namespace {
+    // Formats "<what> <name>: <miniaudio error>" consistently for every failure path.
+    std::string AudioError(std::string_view what, std::string_view name, ma_result result) {
+        std::string message(what);
+        if (!name.empty()) {
+            message += ' ';
+            message += name;
+        }
+        message += ": ";
+        message += ma_result_description(result);
+        return message;
+    }
+
     class MiniaudioRuntime {
     public:
         MiniaudioRuntime() {
             const ma_result result = ma_engine_init(nullptr, &m_Engine);
             if (result != MA_SUCCESS) {
-                std::cerr << "Audio: failed to initialize miniaudio engine: "
-                          << ma_result_description(result) << std::endl;
+                Log::Error("Audio", AudioError("failed to initialize miniaudio engine", "", result));
                 return;
             }
 
@@ -49,7 +61,7 @@ std::shared_ptr<AudioBuffer> AudioBuffer::CreateFromMemory(const void *data,
                                                            std::size_t size,
                                                            const std::string &debugName) {
     if (data == nullptr || size == 0) {
-        std::cerr << "AudioBuffer: empty audio data for " << debugName << std::endl;
+        Log::Error("AudioBuffer", "empty audio data for " + debugName);
         return nullptr;
     }
 
@@ -59,14 +71,13 @@ std::shared_ptr<AudioBuffer> AudioBuffer::CreateFromMemory(const void *data,
 
     const ma_result result = ma_decode_memory(data, size, &config, &frameCount, &decodedSamples);
     if (result != MA_SUCCESS) {
-        std::cerr << "AudioBuffer: failed to decode " << debugName << ": "
-                  << ma_result_description(result) << std::endl;
+        Log::Error("AudioBuffer", AudioError("failed to decode", debugName, result));
         return nullptr;
     }
 
     if (decodedSamples == nullptr || frameCount == 0 || config.channels == 0 || config.sampleRate == 0) {
         ma_free(decodedSamples, nullptr);
-        std::cerr << "AudioBuffer: decoded no playable samples for " << debugName << std::endl;
+        Log::Error("AudioBuffer", "decoded no playable samples for " + debugName);
         return nullptr;
     }
 
@@ -130,8 +141,7 @@ std::shared_ptr<AudioClip> AudioClip::Create(std::shared_ptr<AudioBuffer> buffer
 
     ma_result result = ma_audio_buffer_init(&bufferConfig, &impl->dataSource);
     if (result != MA_SUCCESS) {
-        std::cerr << "AudioClip: failed to create audio buffer for " << debugName << ": "
-                  << ma_result_description(result) << std::endl;
+        Log::Error("AudioClip", AudioError("failed to create audio buffer for", debugName, result));
         return nullptr;
     }
     impl->dataSourceInitialized = true;
@@ -145,8 +155,7 @@ std::shared_ptr<AudioClip> AudioClip::Create(std::shared_ptr<AudioBuffer> buffer
     if (result != MA_SUCCESS) {
         ma_audio_buffer_uninit(&impl->dataSource);
         impl->dataSourceInitialized = false;
-        std::cerr << "AudioClip: failed to create sound for " << debugName << ": "
-                  << ma_result_description(result) << std::endl;
+        Log::Error("AudioClip", AudioError("failed to create sound for", debugName, result));
         return nullptr;
     }
     impl->soundInitialized = true;
@@ -180,22 +189,19 @@ void AudioClip::play() {
 
     ma_result result = ma_sound_stop(&m_Impl->sound);
     if (result != MA_SUCCESS) {
-        std::cerr << "AudioClip: failed to stop before replaying " << m_Impl->debugName << ": "
-                  << ma_result_description(result) << std::endl;
+        Log::Error("AudioClip", AudioError("failed to stop before replaying", m_Impl->debugName, result));
         return;
     }
 
     result = ma_sound_seek_to_pcm_frame(&m_Impl->sound, 0);
     if (result != MA_SUCCESS) {
-        std::cerr << "AudioClip: failed to rewind " << m_Impl->debugName << ": "
-                  << ma_result_description(result) << std::endl;
+        Log::Error("AudioClip", AudioError("failed to rewind", m_Impl->debugName, result));
         return;
     }
 
     result = ma_sound_start(&m_Impl->sound);
     if (result != MA_SUCCESS) {
-        std::cerr << "AudioClip: failed to start " << m_Impl->debugName << ": "
-                  << ma_result_description(result) << std::endl;
+        Log::Error("AudioClip", AudioError("failed to start", m_Impl->debugName, result));
     }
 }
 

@@ -5,6 +5,11 @@
 
 #include "Composable.h"
 
+// Lifecycle is owned by SceneManager: it calls Init() when a scene becomes active
+// and Destroy() before dropping it. Destroy() is deliberately NOT invoked from the
+// destructor -- a virtual call there resolves to Scene::Destroy(), never the derived
+// override, and Scene::Destroy() clears the global LayerManager, which must not
+// happen for a scene that was queued but never made active.
 class Scene {
 public:
     // Scene constructor is used for loading assets not any gameplay logic.
@@ -17,9 +22,7 @@ public:
 
     virtual void Destroy();
 
-    virtual ~Scene() {
-        Destroy();
-    }
+    virtual ~Scene() = default;
 
     std::shared_ptr<Composable::Node> CreateEntity(const std::string &name) {
         return m_Scene.CreateNode(name);

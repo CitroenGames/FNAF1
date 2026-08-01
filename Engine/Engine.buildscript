@@ -4,8 +4,10 @@ sources = src/**/*.cpp
 headers = src/**/*.h, src/**/*.hpp
 includes = src, deps/stb
 public_includes = src
+# Engine source is warning-clean at /W4; vendored deps are marked external so their
+# noise does not mask real diagnostics in engine code.
 forced_includes[x64] = pch.h
-cflags[x64] = /FS
+cflags[x64] = /FS /W4 /external:W0 "/external:I../Engine/deps/ECS/src" "/external:I../Engine/deps/stb"
 cflags[Linux] = -include pch.h
 cflags[macOS] = -include pch.h
 std = 20

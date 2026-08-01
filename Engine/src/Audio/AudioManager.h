@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <vector>
@@ -14,13 +15,23 @@ public:
     void PlaySFX(const std::string &id, float volume = 100.0f);
     void StopAllAudio();
     void StopMusic(const std::string &id);
-    void Preload();
+
+    // Releases one-shot sounds that have finished playing. Called automatically
+    // whenever a new sound starts; expose it so a scene can reclaim voices early.
+    void ReapFinishedSounds();
+
+    std::size_t ActiveVoiceCount() const;
 
 private:
-    AudioManager();
+    AudioManager() = default;
 
-    std::shared_ptr<AudioClip> GetMusic(const std::string &id);
+    struct Voice {
+        std::string id;
+        std::shared_ptr<AudioClip> clip;
+    };
 
-    std::vector<std::shared_ptr<AudioClip> > m_ActiveMusic;
-    std::vector<std::shared_ptr<AudioClip> > m_ActiveSounds;
+    // Both lists own the only reference to their clips, so erasing an entry
+    // frees the underlying miniaudio voice.
+    std::vector<Voice> m_ActiveMusic;
+    std::vector<Voice> m_ActiveSounds;
 };

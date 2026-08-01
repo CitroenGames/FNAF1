@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -13,6 +12,7 @@
 
 #include "Assets/AssetFileSystem.h"
 #include "Audio/AudioClip.h"
+#include "Utils/Log.h"
 #include "Pak.h"
 
 namespace {
@@ -24,7 +24,6 @@ namespace {
     std::map<std::string, std::shared_ptr<Paingine2D::Texture> > g_Textures;
     std::map<std::string, std::shared_ptr<AudioBuffer> > g_AudioBuffers;
     std::map<std::string, std::shared_ptr<Paingine2D::Font> > g_Fonts;
-    std::map<std::string, std::shared_ptr<std::vector<uint8_t> > > g_FontBuffers;
 
     std::shared_ptr<std::vector<uint8_t> > LoadPakAsset(const std::string &filename) {
         if (g_PakHandler == nullptr || g_PakFile.empty()) {
@@ -32,6 +31,33 @@ namespace {
         }
 
         return g_PakHandler->LoadFile(g_PakFile, filename);
+    }
+
+    // Shared cache-miss path for asset types constructed via loadFromMemory.
+    // Both Texture and Font copy the bytes they are given, so the source buffer
+    // only has to outlive the call.
+    template<typename T>
+    std::shared_ptr<T> GetOrLoad(std::map<std::string, std::shared_ptr<T> > &cache,
+                                 const std::string &filename,
+                                 std::string_view scope) {
+        const auto cached = cache.find(filename);
+        if (cached != cache.end()) {
+            return cached->second;
+        }
+
+        const auto bytes = Resources::LoadBytes(filename);
+        if (!bytes) {
+            Log::Error(scope, "failed to load " + filename);
+            return nullptr;
+        }
+
+        auto asset = std::make_shared<T>();
+        if (!asset->loadFromMemory(bytes->data(), bytes->size())) {
+            Log::Error(scope, "failed to decode " + filename);
+            return nullptr;
+        }
+
+        return cache.emplace(filename, std::move(asset)).first->second;
     }
 }
 
@@ -55,7 +81,6 @@ void Resources::Unload() {
     g_Textures.clear();
     g_AudioBuffers.clear();
     g_Fonts.clear();
-    g_FontBuffers.clear();
 }
 
 std::shared_ptr<std::vector<uint8_t> > Resources::LoadBytes(const std::string &filename) {
@@ -71,24 +96,7 @@ std::shared_ptr<std::vector<uint8_t> > Resources::LoadBytes(const std::string &f
 }
 
 std::shared_ptr<Paingine2D::Texture> Resources::GetTexture(const std::string &filename) {
-    auto textureIt = g_Textures.find(filename);
-    if (textureIt == g_Textures.end()) {
-        const auto textureData = LoadBytes(filename);
-        if (!textureData) {
-            std::cerr << "Resources::GetTexture: Failed to load texture: " << filename << std::endl;
-            return nullptr;
-        }
-
-        auto texture = std::make_shared<Paingine2D::Texture>();
-        if (!texture->loadFromMemory(textureData->data(), textureData->size())) {
-            std::cerr << "Resources::GetTexture: Failed to load texture from memory: " << filename << std::endl;
-            return nullptr;
-        }
-
-        textureIt = g_Textures.emplace(filename, texture).first;
-    }
-
-    return textureIt->second;
+    return GetOrLoad(g_Textures, filename, "Resources::GetTexture");
 }
 
 std::shared_ptr<AudioClip> Resources::GetMusic(const std::string &filename) {
@@ -96,7 +104,7 @@ std::shared_ptr<AudioClip> Resources::GetMusic(const std::string &filename) {
     if (bufferIt == g_AudioBuffers.end()) {
         const auto musicData = LoadBytes(filename);
         if (!musicData) {
-            std::cerr << "Resources::GetMusic: Failed to load music: " << filename << std::endl;
+            Log::Error("Resources::GetMusic", "failed to load " + filename);
             return nullptr;
         }
 
@@ -112,25 +120,7 @@ std::shared_ptr<AudioClip> Resources::GetMusic(const std::string &filename) {
 }
 
 std::shared_ptr<Paingine2D::Font> Resources::GetFont(const std::string &filename) {
-    auto fontIt = g_Fonts.find(filename);
-    if (fontIt == g_Fonts.end()) {
-        const auto fontData = LoadBytes(filename);
-        if (!fontData) {
-            std::cerr << "Resources::GetFont: Failed to load font: " << filename << std::endl;
-            return nullptr;
-        }
-
-        auto font = std::make_shared<Paingine2D::Font>();
-        if (!font->loadFromMemory(fontData->data(), fontData->size())) {
-            std::cerr << "Resources::GetFont: Failed to load font from memory: " << filename << std::endl;
-            return nullptr;
-        }
-
-        g_FontBuffers[filename] = fontData;
-        fontIt = g_Fonts.emplace(filename, font).first;
-    }
-
-    return fontIt->second;
+    return GetOrLoad(g_Fonts, filename, "Resources::GetFont");
 }
 
 std::vector<std::string> Resources::ListFiles() {

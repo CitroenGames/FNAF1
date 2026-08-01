@@ -5,9 +5,10 @@
 #include <ctime>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include <system_error>
+
+#include "Utils/Log.h"
 
 namespace {
     std::filesystem::path NormalizeReportFolder(const std::string &folder) {
@@ -61,8 +62,8 @@ namespace Paingine2D {
         std::error_code error;
         std::filesystem::create_directories(reportFolder, error);
         if (error) {
-            std::cerr << "CrashHandler: failed to create crash report folder '"
-                      << reportFolder.string() << "': " << error.message() << std::endl;
+            Log::Error("CrashHandler",
+                       "failed to create crash report folder '" + reportFolder.string() + "': " + error.message());
         }
 
         return m_platform->Install(*this) && !error;

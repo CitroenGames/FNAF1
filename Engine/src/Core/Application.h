@@ -8,9 +8,12 @@
 
 class Application {
 public:
+    // Fixed-update rate used when a config leaves it unset or supplies a non-positive value.
+    static constexpr int DEFAULT_FIXED_TICK_RATE = 66;
+
     struct Config {
         Window::Config window;
-        int fixedTickRate = 66;
+        int fixedTickRate = DEFAULT_FIXED_TICK_RATE;
         bool verticalSync = true;
         bool enableImGui = true;
         Paingine2D::Color clearColor = Paingine2D::Color::Black;
@@ -29,4 +32,8 @@ public:
     static void Destroy();
 
     static const Config &GetConfig();
+
+    // Seconds advanced by one SceneManager::FixedUpdate. Prefer this over
+    // hardcoding the tick rate so systems stay correct if the config changes.
+    static float GetFixedDeltaTime();
 };

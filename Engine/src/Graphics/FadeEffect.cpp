@@ -42,7 +42,12 @@ bool FadeEffect::Update(Paingine2D::Time deltaTime) {
     }
 
     m_ElapsedTime += deltaTime;
-    const float progress = m_ElapsedTime.asSeconds() / m_Duration.asSeconds();
+
+    // A zero-length fade completes immediately rather than dividing by zero.
+    const float durationSeconds = m_Duration.asSeconds();
+    const float progress = durationSeconds > 0.0f
+        ? m_ElapsedTime.asSeconds() / durationSeconds
+        : 1.0f;
 
     if (progress >= 1.0f) {
         if (m_State == In) {
@@ -74,22 +79,18 @@ void FadeEffect::ApplyAlpha() {
         return;
     }
 
-    Paingine2D::Color color;
-    if (auto* shape = dynamic_cast<Paingine2D::Shape*>(m_Drawable)) {
-        color = shape->getFillColor();
+    // RectangleShape derives from Shape, so the Shape branch already covers it.
+    if (auto *shape = dynamic_cast<Paingine2D::Shape *>(m_Drawable)) {
+        Paingine2D::Color color = shape->getFillColor();
         color.a = m_Alpha;
         shape->setFillColor(color);
-    } else if (auto* sprite = dynamic_cast<Paingine2D::Sprite*>(m_Drawable)) {
-        color = sprite->getColor();
+    } else if (auto *sprite = dynamic_cast<Paingine2D::Sprite *>(m_Drawable)) {
+        Paingine2D::Color color = sprite->getColor();
         color.a = m_Alpha;
         sprite->setColor(color);
-    } else if (auto* text = dynamic_cast<Paingine2D::Text*>(m_Drawable)) {
-        color = text->getFillColor();
+    } else if (auto *text = dynamic_cast<Paingine2D::Text *>(m_Drawable)) {
+        Paingine2D::Color color = text->getFillColor();
         color.a = m_Alpha;
         text->setFillColor(color);
-    } else if (auto* rectangleShape = dynamic_cast<Paingine2D::RectangleShape*>(m_Drawable)) {
-        color = rectangleShape->getFillColor();
-        color.a = m_Alpha;
-        rectangleShape->setFillColor(color);
     }
 }

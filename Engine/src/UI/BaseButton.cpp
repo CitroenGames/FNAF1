@@ -4,7 +4,9 @@
 
 #include <Paingine/Window/Mouse.hpp>
 
+#include "Assets/Resources.h"
 #include "Core/Window.h"
+#include "Utils/Log.h"
 
 bool BaseButton::IsMouseOver() const {
     const auto window = Window::GetWindow();
@@ -38,4 +40,25 @@ bool BaseButton::SetOwnedTexture(std::shared_ptr<Paingine2D::Texture> texture) {
 
     Paingine2D::Sprite::setTexture(*m_ButtonTexture);
     return true;
+}
+
+void BaseButton::SetTexture(const std::string &textureFile) {
+    ApplyTexture(Resources::GetTexture(textureFile), "failed to load texture " + textureFile);
+}
+
+void BaseButton::SetTexture(const Paingine2D::Texture &texture) {
+    ApplyTexture(std::make_shared<Paingine2D::Texture>(texture), "provided texture is null");
+}
+
+void BaseButton::SetTexture(std::shared_ptr<Paingine2D::Texture> texture) {
+    ApplyTexture(std::move(texture), "provided texture is null");
+}
+
+void BaseButton::ApplyTexture(std::shared_ptr<Paingine2D::Texture> texture, const std::string &errorMessage) {
+    if (!SetOwnedTexture(std::move(texture))) {
+        Log::Error("Button", errorMessage);
+        return;
+    }
+
+    OnTextureApplied();
 }
